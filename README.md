@@ -1,5 +1,7 @@
 # nibble
 
+https://docs.google.com/document/d/1V9t0_eSW7hAA2StlWDDHjjDPwIBTxm_iDs0mwhZYaP4/edit?usp=sharing
+
 We want to solve the problem of storing and retrieving recipes for the general college student. Allowing users to add their own recipes, see other people’s recipes, and filter for recipes with some criteria. 
 
 One user is using the website only to search for, discover, and read new recipes written by others. 
