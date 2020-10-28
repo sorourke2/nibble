@@ -3,10 +3,16 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
+import { combineReducers, createStore } from 'redux';
+import { Provider, connect } from 'react-redux';
+import NibbleComponent from './components/NibbleComponent';
+
+
+const reducers = combineReducers({})
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <NibbleComponent />
   </React.StrictMode>,
   document.getElementById("root")
 );
