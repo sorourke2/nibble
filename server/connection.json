@@ -1,7 +1,16 @@
 {
-  "host": "localhost",
+  "host": "127.0.0.1",
   "port": 3306,
   "database": "nibble",
   "user": "nibble",
-  "password": "Vlz749X"
+  "password": "Vlz749X",
+  "url": "Mysql://nibble:Vlz749X@127.0.0.1:3306/nibble",
+  "sequelizeAutoOptions": {
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "port": "3306",
+    "caseModel": "c",
+    "caseFile": "c",
+    "lang": "es6"
+  }
 }

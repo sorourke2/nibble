@@ -11,11 +11,13 @@ app.use(session({
     saveUninitialized: true,
     secret: 'any string'
 }));
+const config = require('./config.json');
+const Sequelize = require('sequelize'); 
+const sequelize = new Sequelize(config.db.url);
 
-const connection = require('./connection.json');
-const sequelize = require('sequelize');
-const sequelize =
-  new Sequelize(connection.database, connection.username, connection.password);
+const SequelizeAuto = require('sequelize-auto');
+const auto = new SequelizeAuto(sequelize, null, null, config.db.sequelizeAutoOptions);
+auto.run()
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin",

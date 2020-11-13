@@ -4,12 +4,19 @@
   "description": "The server providing as Nibble middle tier",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ssr": "npm run build:client-and-server-bundles && npm run webpack:server",
+    "serve:ssr": "node dist/server",
+    "build:client-and-server-bundles": "ng build --prod && ng run angular.io-example:server",
+    "webpack:server": "webpack --config webpack.server.config.js --progress --colors"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "sequelize": "^6.3.5"
+    "express-session": "^1.17.1",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.3.5",
+    "sequelize-auto": "^0.7.1"
   }
 }
