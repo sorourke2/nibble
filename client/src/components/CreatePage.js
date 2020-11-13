@@ -1,5 +1,6 @@
 import React from "react";
 import NavBar from "./NavBar";
+import Footer from "./Footer";
 
 export default class CreatePage extends React.Component {
   render() {
@@ -7,6 +8,7 @@ export default class CreatePage extends React.Component {
       <>
         <NavBar />
         <div>Create</div>
+        <Footer />
       </>
     );
   }

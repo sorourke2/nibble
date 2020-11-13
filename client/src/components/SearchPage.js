@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import NavBar from "./NavBar";
 import SearchResult from "./SearchResult";
+import Footer from "./Footer";
 
 const tempResults = [
   {
@@ -52,6 +53,7 @@ const tempResults = [
 
 const SearchContainer = styled.div`
   text-align: center;
+  margin-bottom: 80px;
 `;
 
 const Prompt = styled.div`
@@ -122,6 +124,7 @@ const SearchPage = () => {
           </ResultsContainer>
         )}
       </SearchContainer>
+      <Footer />
     </>
   );
 };

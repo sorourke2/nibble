@@ -12,11 +12,11 @@ const Logo = styled.a`
   font-size: 48px;
   text-decoration: none;
   color: black;
+`;
 
-  :hover {
-    transition: all 100ms ease;
-    color: red;
-  }
+const FirstLetter = styled.span`
+  font-weight: bold;
+  color: darkorchid;
 `;
 
 const Pages = styled.div`
@@ -39,7 +39,9 @@ const PageLink = styled.a`
 const NavBar = () => {
   return (
     <Container>
-      <Logo href="/home">Nibble</Logo>
+      <Logo href="/home">
+        <FirstLetter>N</FirstLetter>ibble
+      </Logo>
       <Pages>
         <PageLink href="/search">Search</PageLink>
         <PageLink href="/create">Create</PageLink>
