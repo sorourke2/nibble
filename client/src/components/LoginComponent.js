@@ -1,11 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
 
 export default class LoginComponent extends React.Component {
-
-  
   render() {
-    return (<div></div>);
+    return <div>Login</div>;
   }
-};
-
+}
