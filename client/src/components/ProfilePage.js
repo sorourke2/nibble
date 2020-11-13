@@ -1,7 +1,7 @@
 import React from "react";
 import NavBar from "./NavBar";
 
-export default class ProfileComponent extends React.Component {
+export default class ProfilePage extends React.Component {
   render() {
     return (
       <>
