@@ -8,7 +8,7 @@ const CardContainer = styled.div`
   padding: 20px;
   border: 2px solid black;
   border-radius: 10px;
-  font-size: 24px;
+  font-size: 18px;
 `;
 
 const Header = styled.div`

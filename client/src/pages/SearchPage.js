@@ -57,15 +57,16 @@ const SearchContainer = styled.div`
 `;
 
 const Prompt = styled.div`
-  margin: 60px;
-  font-size: 36px;
+  margin-top: 60px;
+  font-size: 24px;
 `;
 
 const SearchBar = styled.input`
-  font-size: 28px;
+  margin-top: 40px;
+  font-size: 18px;
   width: 400px;
   border: 1px solid black;
-  border-radius: 10px;
+  border-radius: 6px;
   padding: 10px;
 
   :focus {
@@ -74,13 +75,14 @@ const SearchBar = styled.input`
 `;
 
 const SearchButton = styled.button`
-  width: 120px;
-  font-size: 28px;
+  width: 100px;
+  font-size: 20px;
   padding: 10px;
   margin-left: 20px;
   background: lightgray;
   border: none;
   cursor: pointer;
+  border-radius: 6px;
 
   :hover {
     background: lightblue;
@@ -89,39 +91,55 @@ const SearchButton = styled.button`
 `;
 
 const ResultsContainer = styled.div`
-  margin-top: 60px;
+  margin-top: 40px;
+`;
+
+const ResultsCount = styled.div`
+  margin-top: 20px;
+  font-size: 16px;
 `;
 
 const SearchPage = () => {
   const [clicked, setClicked] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [oldSearchTerm, setOldSearchTerm] = useState("");
+
+  const onSearchKeyDown = (event) => {
+    if (event.key === "Enter") onSearch();
+  };
 
   const onSearchChange = (event) => {
-    if (event.key === "Enter") {
-      onSearch();
-    }
+    setSearchTerm(event.target.value);
   };
 
   const onSearch = () => {
     setClicked(true);
+    setOldSearchTerm(searchTerm);
   };
 
   return (
     <>
       <NavBar selectedTab="search" />
       <SearchContainer>
-        <Prompt>What are you looking for?</Prompt>
+        {!clicked && <Prompt>What are you looking for?</Prompt>}
         <SearchBar
           autoFocus
           placeholder="Apple Pie"
-          onKeyDown={onSearchChange}
+          onKeyDown={onSearchKeyDown}
+          onChange={onSearchChange}
         />
         <SearchButton onClick={onSearch}>Search</SearchButton>
         {clicked && (
-          <ResultsContainer>
-            {tempResults.map((result) => (
-              <SearchResult key={result.id} recipe={result} />
-            ))}
-          </ResultsContainer>
+          <>
+            <ResultsCount>
+              {tempResults.length} results for "{oldSearchTerm}"
+            </ResultsCount>
+            <ResultsContainer>
+              {tempResults.map((result) => (
+                <SearchResult key={result.id} recipe={result} />
+              ))}
+            </ResultsContainer>
+          </>
         )}
       </SearchContainer>
       <Footer />
