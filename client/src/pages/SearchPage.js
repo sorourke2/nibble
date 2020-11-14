@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import NavBar from "./NavBar";
-import SearchResult from "./SearchResult";
-import Footer from "./Footer";
+import NavBar from "../components/NavBar";
+import SearchResult from "../components/SearchResult";
+import Footer from "../components/Footer";
 
 const tempResults = [
   {
@@ -107,7 +107,7 @@ const SearchPage = () => {
 
   return (
     <>
-      <NavBar />
+      <NavBar selectedTab="search" />
       <SearchContainer>
         <Prompt>What are you looking for?</Prompt>
         <SearchBar

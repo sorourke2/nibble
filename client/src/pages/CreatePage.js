@@ -1,12 +1,12 @@
 import React from "react";
-import NavBar from "./NavBar";
-import Footer from "./Footer";
+import NavBar from "../components/NavBar";
+import Footer from "../components/Footer";
 
 export default class CreatePage extends React.Component {
   render() {
     return (
       <>
-        <NavBar />
+        <NavBar selectedTab="create" />
         <div>Create</div>
         <Footer />
       </>

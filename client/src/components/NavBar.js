@@ -32,20 +32,43 @@ const PageLink = styled.a`
 
   :hover {
     transition: all 100ms ease;
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid darkorchid;
   }
 `;
 
-const NavBar = () => {
+const HighlightedPageLink = styled.a`
+  margin-right: 32px;
+  text-decoration: none;
+  color: darkorchid;
+
+  :hover {
+    transition: all 100ms ease;
+    border-bottom: 2px solid darkorchid;
+  }
+`;
+
+const NavBar = ({ selectedTab }) => {
   return (
     <Container>
       <Logo href="/home">
         <FirstLetter>N</FirstLetter>ibble
       </Logo>
       <Pages>
-        <PageLink href="/search">Search</PageLink>
-        <PageLink href="/create">Create</PageLink>
-        <PageLink href="/profile">Profile</PageLink>
+        {selectedTab === "search" ? (
+          <HighlightedPageLink href="/search">Search</HighlightedPageLink>
+        ) : (
+          <PageLink href="/search">Search</PageLink>
+        )}
+        {selectedTab === "create" ? (
+          <HighlightedPageLink href="/create">Create</HighlightedPageLink>
+        ) : (
+          <PageLink href="/create">Create</PageLink>
+        )}
+        {selectedTab === "profile" ? (
+          <HighlightedPageLink href="/profile">Profile</HighlightedPageLink>
+        ) : (
+          <PageLink href="/profile">Profile</PageLink>
+        )}
       </Pages>
     </Container>
   );

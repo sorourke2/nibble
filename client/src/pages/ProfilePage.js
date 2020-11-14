@@ -1,12 +1,12 @@
 import React from "react";
-import NavBar from "./NavBar";
-import Footer from "./Footer";
+import NavBar from "../components/NavBar";
+import Footer from "../components/Footer";
 
 export default class ProfilePage extends React.Component {
   render() {
     return (
       <>
-        <NavBar />
+        <NavBar selectedTab="profile" />
         <div>Profile</div>
         <Footer />
       </>
