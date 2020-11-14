@@ -13,18 +13,7 @@ app.use(
     secret: 'any string',
   })
 );
-const config = require('./config.json');
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize(config.db.url);
-
-const SequelizeAuto = require('sequelize-auto');
-const auto = new SequelizeAuto(
-  sequelize,
-  null,
-  null,
-  config.db.sequelizeAutoOptions
-);
-auto.run();
+const database = require('./database');
 
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', 'http://localhost:4200');

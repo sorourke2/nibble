@@ -3,44 +3,43 @@
 const Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   return measurement.init(sequelize, DataTypes);
-};
+}
 
 class measurement extends Sequelize.Model {
   static init(sequelize, DataTypes) {
-    super.init(
+  super.init({
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true
+    },
+    name: {
+      type: DataTypes.STRING(225),
+      allowNull: false
+    },
+    unit: {
+      type: DataTypes.STRING(225),
+      allowNull: true
+    },
+    amount: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    }
+  }, {
+    sequelize,
+    tableName: 'measurement',
+    timestamps: false,
+    indexes: [
       {
-        id: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-          primaryKey: true,
-        },
-        name: {
-          type: DataTypes.STRING(225),
-          allowNull: false,
-        },
-        unit: {
-          type: DataTypes.STRING(225),
-          allowNull: true,
-        },
-        amount: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
+        name: "PRIMARY",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "id" },
+        ]
       },
-      {
-        sequelize,
-        tableName: 'measurement',
-        timestamps: false,
-        indexes: [
-          {
-            name: 'PRIMARY',
-            unique: true,
-            using: 'BTREE',
-            fields: [{ name: 'id' }],
-          },
-        ],
-      }
-    );
-    return measurement;
+    ]
+  });
+  return measurement;
   }
 }
