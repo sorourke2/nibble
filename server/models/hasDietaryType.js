@@ -20,6 +20,7 @@ class hasDietaryType extends Sequelize.Model {
     dietary_type: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      primaryKey: true,
       references: {
         model: 'dietary_type',
         key: 'id'
@@ -36,6 +37,7 @@ class hasDietaryType extends Sequelize.Model {
         using: "BTREE",
         fields: [
           { name: "recipe" },
+          { name: "dietary_type" },
         ]
       },
       {

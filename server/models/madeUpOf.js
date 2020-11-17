@@ -11,14 +11,18 @@ class madeUpOf extends Sequelize.Model {
     ingredient: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      references: {
+        model: 'ingredient',
+        key: 'id'
+      }
     },
     recipe: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'ingredient',
+        model: 'recipe',
         key: 'id'
       }
     }
@@ -37,7 +41,7 @@ class madeUpOf extends Sequelize.Model {
         ]
       },
       {
-        name: "made_up_of_1_idx",
+        name: "recipe",
         using: "BTREE",
         fields: [
           { name: "recipe" },

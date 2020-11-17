@@ -13,6 +13,7 @@ app.use(
     secret: 'any string',
   })
 );
+
 const database = require('./database');
 
 app.use(function (req, res, next) {
@@ -27,6 +28,7 @@ app.use(function (req, res, next) {
 });
 
 require('./controllers/recipes.js')(app);
+require('./controllers/ingredients.js')(app);
 
 app.get('/hello', (req, res) => res.send('hello world!'));
 

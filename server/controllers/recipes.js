@@ -16,6 +16,12 @@ module.exports = function (app) {
       .then((ingredients) => res.json(ingredients))
   );
 
+  app.get('/api/recipes/:rid/dietary-types', (req, res) =>
+    recipesService
+      .findDietaryTypesForRecipe(req.params['rid'])
+      .then((dietaryTypes) => res.json(dietaryTypes))
+  );
+
   app.post('/api/recipes', (req, res) =>
     recipesService
       .createRecipe(req.body)

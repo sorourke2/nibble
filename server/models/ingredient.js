@@ -20,11 +20,7 @@ class ingredient extends Sequelize.Model {
     },
     measurement: {
       type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'measurement',
-        key: 'id'
-      }
+      allowNull: true
     }
   }, {
     sequelize,
@@ -37,13 +33,6 @@ class ingredient extends Sequelize.Model {
         using: "BTREE",
         fields: [
           { name: "id" },
-        ]
-      },
-      {
-        name: "ingrdient_1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "measurement" },
         ]
       },
     ]
