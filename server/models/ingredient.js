@@ -2,10 +2,10 @@
 
 const Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  return recipe.init(sequelize, DataTypes);
+  return ingredient.init(sequelize, DataTypes);
 }
 
-class recipe extends Sequelize.Model {
+class ingredient extends Sequelize.Model {
   static init(sequelize, DataTypes) {
   super.init({
     id: {
@@ -18,33 +18,13 @@ class recipe extends Sequelize.Model {
       type: DataTypes.STRING(225),
       allowNull: false
     },
-    difficulty: {
-      type: DataTypes.STRING(225),
-      allowNull: true
-    },
-    cooking_method: {
-      type: DataTypes.STRING(225),
-      allowNull: true
-    },
-    serving_size: {
+    measurement: {
       type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    cuisine: {
-      type: DataTypes.STRING(225),
-      allowNull: true
-    },
-    minutes_to_make: {
-      type: DataTypes.STRING(45),
-      allowNull: true
-    },
-    image_source: {
-      type: DataTypes.STRING(45),
       allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'recipe',
+    tableName: 'ingredient',
     timestamps: false,
     indexes: [
       {
@@ -57,6 +37,6 @@ class recipe extends Sequelize.Model {
       },
     ]
   });
-  return recipe;
+  return ingredient;
   }
 }
