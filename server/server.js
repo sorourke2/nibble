@@ -1,3 +1,4 @@
+const config = require("./config.json");
 const express = require("express");
 const app = express();
 
@@ -32,4 +33,4 @@ require("./controllers/ingredients.js")(app);
 
 app.get("/hello", (req, res) => res.send("hello world!"));
 
-app.listen(4000);
+app.listen(config.port);
