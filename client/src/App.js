@@ -1,18 +1,20 @@
 import React from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 import "./App.css";
-import HomeComponent from "./components/HomeComponent";
-import ProfileComponent from "./components/ProfileComponent";
-import SearchComponent from "./components/SearchComponent";
-import LoginComponent from "./components/LoginComponent";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import CreatePage from "./pages/CreatePage";
+import SearchPage from "./pages/SearchPage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   return (
     <BrowserRouter>
-      <Route path={["/", "/home"]} exact component={HomeComponent} />
-      <Route path="/login" exact component={LoginComponent} />
-      <Route path="/profile" exact={true} component={ProfileComponent} />
-      <Route path="/search" exact component={SearchComponent} />
+      <Route path={["/", "/home"]} exact component={HomePage} />
+      <Route path="/login" exact component={LoginPage} />
+      <Route path="/search" exact component={SearchPage} />
+      <Route path="/create" exact component={CreatePage} />
+      <Route path="/profile" exact={true} component={ProfilePage} />
     </BrowserRouter>
   );
 }
