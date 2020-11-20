@@ -1,8 +1,8 @@
-const db = require('../database').db;
-const { initModels } = require('../models/init-models');
+const db = require("../database").db;
+const { initModels } = require("../models/init-models");
 const models = initModels(db.sequelize);
 
-const findAllIngredients = () => models.Ingredient.findAll();
+const findAllIngredients = () => models.ingredient.findAll();
 
 const findIngredientById = (iid) =>
   models.ingredient.findByPk(iid, {

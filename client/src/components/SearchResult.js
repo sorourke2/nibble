@@ -63,10 +63,12 @@ const SearchResult = ({
         <Title>{name}</Title>
         <Time>{formatRecipeDuration(time, timeUnit)}</Time>
       </Header>
-      <IngredientsTitle>Ingredients:</IngredientsTitle>
+      {/* <IngredientsTitle>Ingredients:</IngredientsTitle>
       {ingredients.map((ingredient, index) => (
-        <IngredientsList key={index}>- {ingredient}</IngredientsList>
-      ))}
+        <IngredientsList key={index}>
+          - {ingredient.measurement} {ingredient.name}
+        </IngredientsList>
+      ))} */}
     </CardContainer>
   );
 };

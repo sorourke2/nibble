@@ -103,6 +103,7 @@ const SearchPage = () => {
   const [clicked, setClicked] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [oldSearchTerm, setOldSearchTerm] = useState("");
+  const [results, setResults] = useState(null);
 
   const onSearchKeyDown = (event) => {
     if (event.key === "Enter") onSearch();
@@ -112,9 +113,13 @@ const SearchPage = () => {
     setSearchTerm(event.target.value);
   };
 
-  const onSearch = () => {
+  const onSearch = async () => {
     setClicked(true);
     setOldSearchTerm(searchTerm);
+    const recipes = await fetch(
+      "http://localhost:4000/api/recipes"
+    ).then((response) => response.json());
+    setResults(recipes);
   };
 
   return (
@@ -129,13 +134,13 @@ const SearchPage = () => {
           onChange={onSearchChange}
         />
         <SearchButton onClick={onSearch}>Search</SearchButton>
-        {clicked && (
+        {results && (
           <>
             <ResultsCount>
-              {tempResults.length} results for "{oldSearchTerm}"
+              {results.length} results for "{oldSearchTerm}"
             </ResultsCount>
             <ResultsContainer>
-              {tempResults.map((result) => (
+              {results.map((result) => (
                 <SearchResult key={result.id} recipe={result} />
               ))}
             </ResultsContainer>
