@@ -1,10 +1,11 @@
-const db = require('../database').db;
-const { initModels } = require('../models/init-models');
+const db = require("../database").db;
+const { initModels } = require("../models/init-models");
 const models = initModels(db.sequelize);
 const findAllRecipes = () => models.recipe.findAll();
 const findRecipeById = (rid) =>
   models.recipe.findByPk(rid, {
-    include: [models.ingredient, models.dietaryType, models.registeredUser],
+    // include: [models.ingredient, models.dietaryType, models.registeredUser],
+    include: [models.ingredient],
     required: true,
   });
 
