@@ -1,6 +1,5 @@
-const config = require("./config.json");
 const Sequelize = require("sequelize");
-const sequelize = new Sequelize(config.db.url);
+const sequelize = new Sequelize(process.env.DATABASE_URL);
 const SequelizeAuto = require("sequelize-auto");
 
 db = {};

@@ -1,4 +1,4 @@
-const config = require("./config.json");
+require("dotenv").config();
 const express = require("express");
 const app = express();
 
@@ -33,4 +33,4 @@ require("./controllers/ingredients.js")(app);
 
 app.get("/hello", (req, res) => res.send("hello world!"));
 
-app.listen(config.port);
+app.listen(process.env.PORT);
