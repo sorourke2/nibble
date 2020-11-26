@@ -28,16 +28,6 @@ const Time = styled.div`
   text-align: right;
 `;
 
-const IngredientsTitle = styled.div`
-  text-align: left;
-  padding-top: 10px;
-`;
-
-const IngredientsList = styled.div`
-  text-align: left;
-  padding-top: 5px;
-`;
-
 const formatRecipeDuration = (time, timeUnit) => {
   let unit;
   switch (timeUnit) {
@@ -63,12 +53,6 @@ const SearchResult = ({
         <Title>{name}</Title>
         <Time>{formatRecipeDuration(time, timeUnit)}</Time>
       </Header>
-      {/* <IngredientsTitle>Ingredients:</IngredientsTitle>
-      {ingredients.map((ingredient, index) => (
-        <IngredientsList key={index}>
-          - {ingredient.measurement} {ingredient.name}
-        </IngredientsList>
-      ))} */}
     </CardContainer>
   );
 };
