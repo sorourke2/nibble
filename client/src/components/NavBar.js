@@ -47,27 +47,46 @@ const HighlightedPageLink = styled.a`
   }
 `;
 
-const NavBar = ({ selectedTab }) => {
+const NavBar = ({ selectedTab, loggedIn = false }) => {
   return (
     <Container>
       <Logo href="/home">
         <FirstLetter>N</FirstLetter>ibble
       </Logo>
       <Pages>
-        {selectedTab === "search" ? (
-          <HighlightedPageLink href="/search">Search</HighlightedPageLink>
+        {loggedIn ? (
+          <>
+            {selectedTab === "search" ? (
+              <HighlightedPageLink href="/search">Search</HighlightedPageLink>
+            ) : (
+              <PageLink href="/search">Search</PageLink>
+            )}
+            {selectedTab === "create" ? (
+              <HighlightedPageLink href="/create">Create</HighlightedPageLink>
+            ) : (
+              <PageLink href="/create">Create</PageLink>
+            )}
+            {selectedTab === "profile" ? (
+              <HighlightedPageLink href="/profile">Profile</HighlightedPageLink>
+            ) : (
+              <PageLink href="/profile">Profile</PageLink>
+            )}
+          </>
         ) : (
-          <PageLink href="/search">Search</PageLink>
-        )}
-        {selectedTab === "create" ? (
-          <HighlightedPageLink href="/create">Create</HighlightedPageLink>
-        ) : (
-          <PageLink href="/create">Create</PageLink>
-        )}
-        {selectedTab === "profile" ? (
-          <HighlightedPageLink href="/profile">Profile</HighlightedPageLink>
-        ) : (
-          <PageLink href="/profile">Profile</PageLink>
+          <>
+            {selectedTab === "register" ? (
+              <HighlightedPageLink href="/register">
+                Register
+              </HighlightedPageLink>
+            ) : (
+              <PageLink href="/register">Register</PageLink>
+            )}
+            {selectedTab === "login" ? (
+              <HighlightedPageLink href="/login">Log In</HighlightedPageLink>
+            ) : (
+              <PageLink href="/login">Log In</PageLink>
+            )}
+          </>
         )}
       </Pages>
     </Container>

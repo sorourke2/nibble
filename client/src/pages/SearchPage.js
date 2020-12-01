@@ -91,7 +91,7 @@ const SearchPage = () => {
 
   return (
     <>
-      <NavBar selectedTab="search" />
+      <NavBar selectedTab="search" loggedIn={true} />
       <SearchContainer>
         {!clicked && <Prompt>What are you looking for?</Prompt>}
         <SearchBar
