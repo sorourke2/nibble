@@ -28,9 +28,14 @@ app.use(function (req, res, next) {
   next();
 });
 
-require("./controllers/recipes.js")(app);
-require("./controllers/ingredients.js")(app);
+require("./controllers/users")(app);
+const userDao = require("./daos/users");
+userDao.syncUser();
+require("./controllers/recipes")(app);
+require("./controllers/ingredients")(app);
 
 app.get("/hello", (req, res) => res.send("hello world!"));
 
-app.listen(process.env.PORT);
+app.listen(process.env.PORT, () => {
+  console.log("Listening at port " + process.env.PORT);
+});
