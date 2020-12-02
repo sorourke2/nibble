@@ -3,7 +3,17 @@ const url = "http://localhost:4000/api/user";
 
 const UserService = {
   loginUser: async (username, password) => {
-    const response = await axios.post(`${url}/login`, { username, password });
+    const response = await axios.post(`${url}/login`, {
+      username,
+      password,
+    });
+    return response.data;
+  },
+  registerUser: async (username, password) => {
+    const response = await axios.post(`${url}/register`, {
+      username,
+      password,
+    });
     return response.data;
   },
 };

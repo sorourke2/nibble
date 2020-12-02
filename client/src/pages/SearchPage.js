@@ -63,12 +63,21 @@ const SearchPage = () => {
   const [results, setResults] = useState(null);
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(paramsString);
-    const searchQuery = searchParams.get("q");
-    if (searchQuery) {
-      // TODO
-      console.log("Searching: " + searchQuery);
-    }
+    const fetchData = async () => {
+      const searchParams = new URLSearchParams(paramsString);
+      const searchQuery = searchParams.get("q");
+      if (searchQuery) {
+        setClicked(true);
+        setSearchTerm(searchQuery);
+        setOldSearchTerm(searchQuery);
+        // TODO: Refactor to service
+        const recipes = await fetch(
+          "http://localhost:4000/api/recipes"
+        ).then((response) => response.json());
+        setResults(recipes);
+      }
+    };
+    fetchData();
   }, [paramsString]);
 
   const onSearchKeyDown = (event) => {
@@ -83,6 +92,7 @@ const SearchPage = () => {
     history.push(`/search?q=${encodeURIComponent(searchTerm)}`);
     setClicked(true);
     setOldSearchTerm(searchTerm);
+    // TODO: Refactor to service
     const recipes = await fetch(
       "http://localhost:4000/api/recipes"
     ).then((response) => response.json());
@@ -97,6 +107,7 @@ const SearchPage = () => {
         <SearchBar
           autoFocus
           placeholder="Apple Pie"
+          value={searchTerm}
           onKeyDown={onSearchKeyDown}
           onChange={onSearchChange}
         />

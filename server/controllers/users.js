@@ -21,9 +21,13 @@ module.exports = (app) => {
       if (usernameTaken) {
         res.status(422).send({ message: "Username already taken" });
       } else {
-        userService.registerUser({ username, password }).then((userId) => {
-          res.status(200).send("Created user " + userId);
-        });
+        userService
+          .registerUser({ username, password })
+          .then(({ username, id }) => {
+            const userForToken = { username, id };
+            const token = jwt.sign(userForToken, process.env.SECRET);
+            res.status(200).send({ token, username });
+          });
       }
     });
   });

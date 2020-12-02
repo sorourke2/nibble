@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import CreatePage from "./pages/CreatePage";
 import SearchPage from "./pages/SearchPage";
 import ProfilePage from "./pages/ProfilePage";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Switch>
         <Route path={["/", "/home"]} exact component={HomePage} />
         <Route path="/login" exact component={LoginPage} />
+        <Route path="/register" exact component={RegisterPage} />
         <PrivateRoute
           path={["/search", "/search?:queryString"]}
           exact

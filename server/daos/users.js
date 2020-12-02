@@ -34,10 +34,10 @@ const usernameExists = (username) => {
 const registerUser = ({ username, password }) => {
   const saltRounds = 10;
   return bcrypt.hash(password, saltRounds).then((encryptedPassword) =>
-    User.create({ username, password: encryptedPassword }).then((newUser) => {
-      console.log("Created user " + newUser.id);
-      return newUser.id;
-    })
+    User.create({
+      username,
+      password: encryptedPassword,
+    }).then((newUser) => ({ username: newUser.username, id: newUser.id }))
   );
 };
 
