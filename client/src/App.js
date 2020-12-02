@@ -1,6 +1,7 @@
 import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
+import PrivateRoute from "./components/PrivateRoute";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import CreatePage from "./pages/CreatePage";
@@ -10,15 +11,18 @@ import ProfilePage from "./pages/ProfilePage";
 function App() {
   return (
     <Router>
-      <Route path={["/", "/home"]} exact component={HomePage} />
-      <Route path="/login" exact component={LoginPage} />
-      <Route
-        path={["/search", "/search?:queryString"]}
-        exact
-        component={SearchPage}
-      />
-      <Route path="/create" exact component={CreatePage} />
-      <Route path="/profile" exact={true} component={ProfilePage} />
+      <Switch>
+        <Route path={["/", "/home"]} exact component={HomePage} />
+        <Route path="/login" exact component={LoginPage} />
+        <PrivateRoute
+          path={["/search", "/search?:queryString"]}
+          exact
+          component={SearchPage}
+        />
+        <PrivateRoute path="/create" exact component={CreatePage} />
+        <PrivateRoute path="/profile" exact={true} component={ProfilePage} />
+        <Route component={HomePage} />
+      </Switch>
     </Router>
   );
 }
