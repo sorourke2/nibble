@@ -3,9 +3,16 @@ import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 
 const HomePage = () => {
-  return (
+  const isAuthenticated = localStorage.getItem("token");
+
+  return isAuthenticated ? (
     <>
       <NavBar loggedIn={true} />
+      <Footer />
+    </>
+  ) : (
+    <>
+      <NavBar loggedIn={false} />
       <Footer />
     </>
   );
