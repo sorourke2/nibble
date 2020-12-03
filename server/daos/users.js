@@ -1,7 +1,57 @@
 const { DataTypes, Model } = require("sequelize");
 const bcrypt = require("bcrypt");
 const sequelize = require("../database").db.sequelize;
+const { initModels } = require("../models/init-models");
+const models = initModels(sequelize);
 
+const userDao = {
+  usernameExists: (username) => {
+    return models.user
+      .findOne({ where: { username } })
+      .then((user) => user !== null);
+  },
+
+  registerUser: ({ username, password }) => {
+    const saltRounds = 10;
+    return bcrypt.hash(password, saltRounds).then((encryptedPassword) =>
+      models.user
+        .create({
+          username,
+          password: encryptedPassword,
+          displayName: username,
+          avatarColor: "#000000",
+          initialsColor: "#FFFFFF",
+          is_admin: false,
+        })
+        .then((newUser) => ({ username: newUser.username, id: newUser.id }))
+    );
+  },
+
+  truncateUser: () => models.user.destroy({ truncate: { cascade: true } }),
+
+  loginUser: ({ username, password }) =>
+    models.user.findOne({ where: { username } }).then((savedUser) =>
+      bcrypt.compare(password, savedUser.password).then((match) => ({
+        match,
+        username,
+        id: savedUser.id,
+      }))
+    ),
+
+  getUser: ({ id }) => models.user.findByPk(id),
+
+  updateUser: ({ id, displayName, avatarColor, initialsColor }) =>
+    models.user.update(
+      { displayName, avatarColor, initialsColor },
+      { where: { id } }
+    ),
+};
+
+module.exports = {
+  ...userDao,
+};
+
+/*
 class User extends Model {}
 User.init(
   {
@@ -69,11 +119,15 @@ const updateUser = ({ id, displayName, avatarColor, initialsColor }) =>
 
 const syncUser = () => User.sync({ force: true });
 
+const truncateUser = () => User.destroy({ truncate: { cascade: true } });
+
 module.exports = {
   syncUser,
+  truncateUser,
   usernameExists,
   registerUser,
   loginUser,
   getUser,
   updateUser,
 };
+*/

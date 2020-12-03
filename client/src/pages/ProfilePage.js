@@ -7,11 +7,11 @@ import UserService from "../services/UserService";
 import LoadingBar from "../components/LoadingBar";
 import Avatar from "react-avatar";
 import { GithubPicker } from "react-color";
-
-const LogoutButton = styled.button``;
+import BasicButton from "../components/BasicButton";
 
 const Container = styled.div`
   display: flex;
+  margin-bottom: 80px;
 `;
 
 const LeftColumn = styled.div`
@@ -45,8 +45,17 @@ const HR = styled.hr`
   border-radius: 10px;
 `;
 
-const EditButton = styled.button``;
-const SaveButton = styled.button``;
+const EditButton = BasicButton({ hoverColor: "lightblue" });
+
+const CancelButton = styled(BasicButton({ hoverColor: "lightblue" }))`
+  margin-right: 10px;
+`;
+
+const SaveButton = BasicButton({ hoverColor: "lightgreen" });
+
+const LogoutButton = styled(BasicButton({ hoverColor: "lightblue" }))`
+  float: right;
+`;
 
 const InputContainer = styled.div`
   border: 2px solid black;
@@ -87,6 +96,11 @@ const ProfilePage = () => {
     };
     fetchData();
   }, []);
+
+  const onCancel = () => {
+    setEditing(false);
+    getUser();
+  };
 
   const onSave = async () => {
     setUser(null);
@@ -157,17 +171,23 @@ const ProfilePage = () => {
               )}
               <br />
               {editing ? (
-                <SaveButton onClick={onSave}>Save</SaveButton>
+                <>
+                  <CancelButton onClick={onCancel}>Cancel</CancelButton>
+                  <SaveButton onClick={onSave}>Save</SaveButton>
+                </>
               ) : (
                 <EditButton onClick={() => setEditing(true)}>Edit</EditButton>
               )}
+              <LogoutButton onClick={onLogout}>Log Out</LogoutButton>
             </FieldContainer>
           </RightColumn>
         </Container>
       ) : (
-        <LoadingBar loading={true} height={10} />
+        <>
+          <LoadingBar loading={true} height={10} />
+          <LogoutButton onClick={onLogout}>Log Out</LogoutButton>
+        </>
       )}
-      <LogoutButton onClick={onLogout}>Log Out</LogoutButton>
       <Footer />
     </>
   );
