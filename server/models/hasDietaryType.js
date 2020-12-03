@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
 class hasDietaryType extends Sequelize.Model {
   static init(sequelize, DataTypes) {
   super.init({
-    recipe: {
+    recipe_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
@@ -17,7 +17,7 @@ class hasDietaryType extends Sequelize.Model {
         key: 'id'
       }
     },
-    dietary_type: {
+    dietary_type_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
@@ -36,15 +36,15 @@ class hasDietaryType extends Sequelize.Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "recipe" },
-          { name: "dietary_type" },
+          { name: "recipe_id" },
+          { name: "dietary_type_id" },
         ]
       },
       {
-        name: "has_dietary_type_1_idx",
+        name: "dt_foreign_key_idx",
         using: "BTREE",
         fields: [
-          { name: "dietary_type" },
+          { name: "dietary_type_id" },
         ]
       },
     ]

@@ -9,7 +9,6 @@ class dietaryType extends Sequelize.Model {
   static init(sequelize, DataTypes) {
   super.init({
     id: {
-      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true

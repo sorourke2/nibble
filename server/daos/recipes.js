@@ -1,13 +1,17 @@
-const db = require("../database").db;
-const { initModels } = require("../models/init-models");
+const db = require('../database').db;
+const { initModels } = require('../models/init-models');
 const models = initModels(db.sequelize);
 const findAllRecipes = () => models.recipe.findAll();
 const findRecipeById = (rid) =>
-  models.recipe.findByPk(rid, {
-    // include: [models.ingredient, models.dietaryType, models.registeredUser],
-    include: [models.ingredient],
-    required: true,
-  });
+  models.recipe
+    .findByPk(rid, {
+      include: [models.ingredient, models.user, models.dietaryType],
+      required: true,
+    })
+    .then((recipe) => {
+      recipe.author = recipe.user;
+      return recipe;
+    });
 
 const findIngredientsForRecipe = (rid) =>
   findRecipeById(rid).then((recipe) => recipe.ingredients);
@@ -18,7 +22,7 @@ const findDietaryTypesForRecipe = (rid) =>
 const createRecipe = (newRecipe) =>
   models.recipe
     .create(newRecipe, {
-      include: [models.ingredient, models.registeredUser, models.dietaryType],
+      include: [models.ingredient, models.user, models.dietaryType],
       required: true,
     })
     .catch(function (err) {

@@ -1,6 +1,6 @@
 /* jshint indent: 2 */
 
-const Sequelize = require("sequelize");
+const Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   return recipe.init(sequelize, DataTypes);
 };
@@ -43,18 +43,30 @@ class recipe extends Sequelize.Model {
           type: DataTypes.STRING(45),
           allowNull: true,
         },
+        author: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          references: {
+            model: 'user',
+            key: 'id',
+          },
+        },
       },
       {
         sequelize,
-        tableName: "recipe",
-        freezeTableName: true,
+        tableName: 'recipe',
         timestamps: false,
         indexes: [
           {
-            name: "PRIMARY",
+            name: 'PRIMARY',
             unique: true,
-            using: "BTREE",
-            fields: [{ name: "id" }],
+            using: 'BTREE',
+            fields: [{ name: 'id' }],
+          },
+          {
+            name: 'author_fk_idx',
+            using: 'BTREE',
+            fields: [{ name: 'author' }],
           },
         ],
       }
