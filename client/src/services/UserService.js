@@ -28,11 +28,11 @@ const UserService = {
     });
     return response.data;
   },
-  updateUser: async ({ displayName }) => {
+  updateUser: async ({ displayName, avatarColor, initialsColor }) => {
     const token = getToken();
     const response = await axios.put(
       `${url}`,
-      { displayName },
+      { displayName, avatarColor, initialsColor },
       {
         headers: { Authorization: token },
       }

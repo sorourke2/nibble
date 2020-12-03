@@ -23,7 +23,10 @@ User.init(
       type: DataTypes.STRING,
     },
     avatarColor: {
-      type: DataTypes.STRING(6),
+      type: DataTypes.STRING(7),
+    },
+    initialsColor: {
+      type: DataTypes.STRING(7),
     },
   },
   {
@@ -44,6 +47,8 @@ const registerUser = ({ username, password }) => {
       username,
       password: encryptedPassword,
       displayName: username,
+      avatarColor: "#000000",
+      initialsColor: "#FFFFFF",
     }).then((newUser) => ({ username: newUser.username, id: newUser.id }))
   );
 };
@@ -59,8 +64,8 @@ const loginUser = ({ username, password }) =>
 
 const getUser = ({ id }) => User.findByPk(id);
 
-const updateUser = ({ id, displayName }) =>
-  User.update({ displayName }, { where: { id } });
+const updateUser = ({ id, displayName, avatarColor, initialsColor }) =>
+  User.update({ displayName, avatarColor, initialsColor }, { where: { id } });
 
 const syncUser = () => User.sync({ force: true });
 

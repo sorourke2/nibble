@@ -65,9 +65,14 @@ module.exports = (app) => {
       return res.status(401).send({ message: "token invalid" });
 
     const id = decodedToken.id;
-    const displayName = req.body.displayName;
+    const { displayName, avatarColor, initialsColor } = req.body;
 
-    UserService.updateUser({ id, displayName }).then((user) => {
+    UserService.updateUser({
+      id,
+      displayName,
+      avatarColor,
+      initialsColor,
+    }).then((user) => {
       res.sendStatus(200);
     });
   });

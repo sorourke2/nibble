@@ -11,7 +11,8 @@ const userService = {
 
   getUser: ({ id }) => userDao.getUser({ id }),
 
-  updateUser: ({ id, displayName }) => userDao.updateUser({ id, displayName }),
+  updateUser: ({ id, displayName, avatarColor, initialsColor }) =>
+    userDao.updateUser({ id, displayName, avatarColor, initialsColor }),
 };
 
 module.exports = {

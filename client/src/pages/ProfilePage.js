@@ -5,15 +5,32 @@ import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import UserService from "../services/UserService";
 import LoadingBar from "../components/LoadingBar";
+import Avatar from "react-avatar";
+import { GithubPicker } from "react-color";
 
 const LogoutButton = styled.button``;
 
-const ProfileContainer = styled.div`
-  margin-left: 35%;
-  width: 30%;
-  min-width: 400px;
-  margin-top: 50px;
+const Container = styled.div`
+  display: flex;
+`;
+
+const LeftColumn = styled.div`
+  flex: 1;
   font-size: 24px;
+`;
+
+const RightColumn = styled.div`
+  flex: 3;
+  font-size: 24px;
+`;
+
+const FieldContainer = styled.div`
+  margin: 30px;
+`;
+
+const AvatarContainer = styled.div`
+  margin-top: 60px;
+  margin-left: 90px;
 `;
 
 const UserField = styled.div`
@@ -52,12 +69,16 @@ const ProfilePage = () => {
   const history = useHistory();
   const [user, setUser] = useState(null);
   const [displayName, setDisplayName] = useState("");
+  const [avatarColor, setAvatarColor] = useState("");
+  const [initialsColor, setInitialsColor] = useState("");
   const [editing, setEditing] = useState(false);
 
   const getUser = async () => {
     const user = await UserService.getUser();
     setUser(user);
-    setDisplayName(user.displayName || "");
+    setDisplayName(user.displayName);
+    setAvatarColor(user.avatarColor);
+    setInitialsColor(user.initialsColor);
   };
 
   useEffect(() => {
@@ -72,6 +93,8 @@ const ProfilePage = () => {
     setEditing(false);
     const user = {
       displayName,
+      avatarColor,
+      initialsColor,
     };
     await UserService.updateUser(user);
     await getUser();
@@ -86,30 +109,61 @@ const ProfilePage = () => {
     <>
       <NavBar selectedTab="profile" loggedIn={true} />
       {user ? (
-        <ProfileContainer>
-          <UserField>Username:</UserField>
-          <HR />
-          <UserField>{user.username}</UserField>
-          <br />
-          <UserField>Display Name:</UserField>
-          <HR />
-          {editing ? (
-            <InputContainer>
-              <UserFieldInput
-                value={displayName}
-                onChange={({ target }) => setDisplayName(target.value)}
+        <Container>
+          <LeftColumn>
+            <AvatarContainer>
+              <Avatar
+                name={displayName}
+                color={avatarColor}
+                fgColor={initialsColor}
+                size={"200px"}
               />
-            </InputContainer>
-          ) : (
-            <UserField>{displayName}</UserField>
-          )}
-          <br />
-          {editing ? (
-            <SaveButton onClick={onSave}>Save</SaveButton>
-          ) : (
-            <EditButton onClick={() => setEditing(true)}>Edit</EditButton>
-          )}
-        </ProfileContainer>
+              {editing && (
+                <>
+                  <br />
+                  <br />
+                  <GithubPicker
+                    triangle="hide"
+                    onChange={(color) => setAvatarColor(color.hex)}
+                  />
+                  <br />
+                  <GithubPicker
+                    colors={["#FFFFFF", "#000000"]}
+                    width="50px"
+                    triangle="hide"
+                    onChange={(color) => setInitialsColor(color.hex)}
+                  />
+                </>
+              )}
+            </AvatarContainer>
+          </LeftColumn>
+          <RightColumn>
+            <FieldContainer>
+              <UserField>Username:</UserField>
+              <HR />
+              <UserField>{user.username}</UserField>
+              <br />
+              <UserField>Display Name:</UserField>
+              <HR />
+              {editing ? (
+                <InputContainer>
+                  <UserFieldInput
+                    value={displayName}
+                    onChange={({ target }) => setDisplayName(target.value)}
+                  />
+                </InputContainer>
+              ) : (
+                <UserField>{displayName}</UserField>
+              )}
+              <br />
+              {editing ? (
+                <SaveButton onClick={onSave}>Save</SaveButton>
+              ) : (
+                <EditButton onClick={() => setEditing(true)}>Edit</EditButton>
+              )}
+            </FieldContainer>
+          </RightColumn>
+        </Container>
       ) : (
         <LoadingBar loading={true} height={10} />
       )}
