@@ -1,15 +1,19 @@
 const userDao = require("../daos/users");
 
-const usernameExists = (username) => userDao.usernameExists(username);
+const userService = {
+  usernameExists: (username) => userDao.usernameExists(username),
 
-const registerUser = ({ username, password }) =>
-  userDao.registerUser({ username, password });
+  registerUser: ({ username, password }) =>
+    userDao.registerUser({ username, password }),
 
-const loginUser = ({ username, password }) =>
-  userDao.loginUser({ username, password });
+  loginUser: ({ username, password }) =>
+    userDao.loginUser({ username, password }),
+
+  getUser: ({ id }) => userDao.getUser({ id }),
+
+  updateUser: ({ id, displayName }) => userDao.updateUser({ id, displayName }),
+};
 
 module.exports = {
-  usernameExists,
-  registerUser,
-  loginUser,
+  ...userService,
 };

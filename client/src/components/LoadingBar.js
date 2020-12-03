@@ -7,9 +7,14 @@ const Container = styled.div`
   background-color: orchid;
 `;
 
-const LoadingBar = ({ loading }) => (
+const LoadingBar = ({ loading, ...rest }) => (
   <Container>
-    <BarLoader loading={loading} width={"100%"} color={"darkorchid"} />
+    <BarLoader
+      loading={loading}
+      width={"100%"}
+      color={"darkorchid"}
+      {...rest}
+    />
   </Container>
 );
 

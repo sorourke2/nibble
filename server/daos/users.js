@@ -19,6 +19,12 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    displayName: {
+      type: DataTypes.STRING,
+    },
+    avatarColor: {
+      type: DataTypes.STRING(6),
+    },
   },
   {
     sequelize,
@@ -37,6 +43,7 @@ const registerUser = ({ username, password }) => {
     User.create({
       username,
       password: encryptedPassword,
+      displayName: username,
     }).then((newUser) => ({ username: newUser.username, id: newUser.id }))
   );
 };
@@ -50,6 +57,11 @@ const loginUser = ({ username, password }) =>
     }))
   );
 
+const getUser = ({ id }) => User.findByPk(id);
+
+const updateUser = ({ id, displayName }) =>
+  User.update({ displayName }, { where: { id } });
+
 const syncUser = () => User.sync({ force: true });
 
 module.exports = {
@@ -57,4 +69,6 @@ module.exports = {
   usernameExists,
   registerUser,
   loginUser,
+  getUser,
+  updateUser,
 };
