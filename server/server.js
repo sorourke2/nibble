@@ -30,7 +30,10 @@ app.use(
 const database = require("./database");
 
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Origin", [
+    "http://localhost:3000",
+    "https://nibble-client.herokuapp.com/register",
+  ]);
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
