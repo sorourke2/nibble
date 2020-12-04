@@ -71,10 +71,7 @@ const SearchPage = () => {
         setClicked(true);
         setSearchTerm(searchQuery);
         setOldSearchTerm(searchQuery);
-        // TODO: Refactor to service
-        const recipes = await fetch(
-          "http://localhost:4000/api/recipes"
-        ).then((response) => response.json());
+        const recipes = await RecipeService.findAllRecipes();
         setResults(recipes);
       }
     };

@@ -1,6 +1,6 @@
 import getToken from "../utils/Token";
 const axios = require("axios").default;
-const url = "http://localhost:4000/api/recipes";
+const url = `${process.env.REACT_APP_SERVER_URL}/api/recipes`;
 
 const RecipeService = {
   findAllRecipes: async () => {
