@@ -2,28 +2,28 @@
 
 const Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  return measurement.init(sequelize, DataTypes);
+  return sessions.init(sequelize, DataTypes);
 }
 
-class measurement extends Sequelize.Model {
+class sessions extends Sequelize.Model {
   static init(sequelize, DataTypes) {
   super.init({
-    id: {
-      type: DataTypes.INTEGER,
+    session_id: {
+      type: DataTypes.STRING(128),
       allowNull: false,
       primaryKey: true
     },
-    unit: {
-      type: DataTypes.STRING(225),
-      allowNull: true
+    expires: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false
     },
-    amount: {
-      type: DataTypes.INTEGER,
+    data: {
+      type: DataTypes.TEXT,
       allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'measurement',
+    tableName: 'sessions',
     timestamps: false,
     indexes: [
       {
@@ -31,11 +31,11 @@ class measurement extends Sequelize.Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "id" },
+          { name: "session_id" },
         ]
       },
     ]
   });
-  return measurement;
+  return sessions;
   }
 }
