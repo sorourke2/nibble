@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import Avatar from "react-avatar";
 
 const CardContainer = styled.div`
   width: 50%;
@@ -8,51 +9,54 @@ const CardContainer = styled.div`
   padding: 20px;
   border: 2px solid black;
   border-radius: 10px;
-  font-size: 18px;
+  font-size: 24px;
 `;
 
 const Header = styled.div`
   height: 40px;
-  border-bottom: 1px solid black;
 `;
 
 const Title = styled.div`
-  display: inline-block;
-  width: 50%;
-  text-align: left;
+  float: left;
 `;
 
-const Time = styled.div`
-  display: inline-block;
-  width: 50%;
-  text-align: right;
+const AvatarContainer = styled.div`
+  float: right;
 `;
 
-const formatRecipeDuration = (time, timeUnit) => {
-  let unit;
-  switch (timeUnit) {
-    case "m":
-      unit = time > 1 ? "minutes" : "minute";
-      break;
-    case "h":
-      unit = time > 1 ? "hours" : "hour";
-      break;
-    default:
-      return "UNKNOWN";
-  }
-
-  return `${time} ${unit}`;
-};
+const HR = styled.hr`
+  margin: 5px 0px;
+  height: 3px;
+  background-color: darkorchid;
+  border: none;
+  border-radius: 10px;
+`;
 
 const SearchResult = ({
-  recipe: { id, name, time, timeUnit, ingredients },
+  recipe: {
+    id,
+    name,
+    time,
+    timeUnit,
+    ingredients,
+    user: { displayName, avatarColor, initialsColor },
+  },
 }) => {
   return (
     <CardContainer>
       <Header>
         <Title>{name}</Title>
-        <Time>{formatRecipeDuration(time, timeUnit)}</Time>
+        <AvatarContainer>
+          <Avatar
+            name={displayName}
+            color={avatarColor}
+            fgColor={initialsColor}
+            size={60}
+          />
+        </AvatarContainer>
       </Header>
+      <br />
+      <HR />
     </CardContainer>
   );
 };

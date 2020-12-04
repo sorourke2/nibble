@@ -29,9 +29,11 @@ app.use(function (req, res, next) {
 });
 
 require("./controllers/users")(app);
-const userDao = require("./daos/users");
+// const userDao = require("./daos/users");
 // userDao.syncUser();
-userDao.truncateUser();
+// userDao.truncateUser();
+// const recipeDao = require("./daos/recipes");
+// recipeDao.truncateRecipe();
 require("./controllers/recipes")(app);
 require("./controllers/ingredients")(app);
 

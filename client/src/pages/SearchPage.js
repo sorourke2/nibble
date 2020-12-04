@@ -4,6 +4,7 @@ import styled from "styled-components";
 import NavBar from "../components/NavBar";
 import SearchResult from "../components/SearchResult";
 import Footer from "../components/Footer";
+import RecipeService from "../services/RecipeService";
 
 const SearchContainer = styled.div`
   text-align: center;
@@ -92,10 +93,7 @@ const SearchPage = () => {
     history.push(`/search?q=${encodeURIComponent(searchTerm)}`);
     setClicked(true);
     setOldSearchTerm(searchTerm);
-    // TODO: Refactor to service
-    const recipes = await fetch(
-      "http://localhost:4000/api/recipes"
-    ).then((response) => response.json());
+    const recipes = await RecipeService.findAllRecipes();
     setResults(recipes);
   };
 

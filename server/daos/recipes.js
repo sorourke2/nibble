@@ -1,7 +1,17 @@
-const db = require('../database').db;
-const { initModels } = require('../models/init-models');
+const db = require("../database").db;
+const { initModels } = require("../models/init-models");
 const models = initModels(db.sequelize);
-const findAllRecipes = () => models.recipe.findAll();
+
+const findAllRecipes = () =>
+  models.recipe.findAll({ include: [models.user] }).then((recipes) => {
+    const safeRecipes = recipes.map((recipe) => {
+      const safeRecipe = recipe.toJSON();
+      delete safeRecipe.user.password;
+      return safeRecipe;
+    });
+    return safeRecipes;
+  });
+
 const findRecipeById = (rid) =>
   models.recipe
     .findByPk(rid, {
@@ -9,8 +19,11 @@ const findRecipeById = (rid) =>
       required: true,
     })
     .then((recipe) => {
-      recipe.author = recipe.user;
-      return recipe;
+      const safeRecipe = recipe.toJSON();
+      safeRecipe.author = safeRecipe.user;
+      delete safeRecipe.user;
+      delete safeRecipe.author.password;
+      return safeRecipe;
     });
 
 const findIngredientsForRecipe = (rid) =>
@@ -44,6 +57,9 @@ const updateRecipe = (rid, newRecipe) => {
   });
 };
 
+const truncateRecipe = () =>
+  models.recipe.destroy({ truncate: { cascade: true } });
+
 module.exports = {
   findAllRecipes,
   findRecipeById,
@@ -51,4 +67,5 @@ module.exports = {
   findIngredientsForRecipe,
   createRecipe,
   updateRecipe,
+  truncateRecipe,
 };

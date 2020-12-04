@@ -1,10 +1,6 @@
+import getToken from "../utils/Token";
 const axios = require("axios").default;
 const url = "http://localhost:4000/api/user";
-
-const getToken = () => {
-  const token = localStorage.getItem("token");
-  return `bearer ${token}`;
-};
 
 const UserService = {
   loginUser: async (username, password) => {
