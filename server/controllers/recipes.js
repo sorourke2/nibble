@@ -3,9 +3,15 @@ const getTokenFrom = require("../utils/token");
 const jwt = require("jsonwebtoken");
 
 module.exports = function (app) {
-  app.get("/api/recipes", (_, res) =>
-    recipesService.findAllRecipes().then((recipes) => res.json(recipes))
-  );
+  app.get("/api/recipes", (req, res) => {
+    const token = getTokenFrom(req);
+    if (!token) return res.status(401).send({ message: "token missing" });
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    if (!decodedToken.id)
+      return res.status(401).send({ message: "token invalid" });
+
+    return recipesService.findAllRecipes().then((recipes) => res.json(recipes));
+  });
 
   app.get("/api/recipes/:rid", (req, res) =>
     recipesService
