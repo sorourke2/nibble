@@ -26,12 +26,12 @@ function initModels(sequelize) {
   hasDietaryType.belongsTo(dietaryType, { foreignKey: "dietary_type_id"});
   recipe.belongsToMany(dietaryType, { through: hasDietaryType, foreignKey: "recipe_id", otherKey: "dietary_type_id" });
   dietaryType.hasMany(hasDietaryType, { foreignKey: "dietary_type_id"});
-  hasSaved.belongsTo(user, { foreignKey: "user"});
-  recipe.belongsToMany(user, { through: hasSaved, foreignKey: "recipe", otherKey: "user" });
-  user.hasMany(hasSaved, { foreignKey: "user"});
-  hasSaved.belongsTo(recipe, { foreignKey: "recipe"});
-  user.belongsToMany(recipe, { through: hasSaved, foreignKey: "user", otherKey: "recipe" });
-  recipe.hasMany(hasSaved, { foreignKey: "recipe"});
+  hasSaved.belongsTo(recipe, { foreignKey: "recipe_id"});
+  user.belongsToMany(recipe, { through: hasSaved, foreignKey: "user_id", otherKey: "recipe_id" });
+  recipe.hasMany(hasSaved, { foreignKey: "recipe_id"});
+  hasSaved.belongsTo(user, { foreignKey: "user_id"});
+  recipe.belongsToMany(user, { through: hasSaved, foreignKey: "recipe_id", otherKey: "user_id" });
+  user.hasMany(hasSaved, { foreignKey: "user_id"});
   ingredient.belongsTo(measurement, { foreignKey: "measurement_id"});
   measurement.hasMany(ingredient, { foreignKey: "measurement_id"});
   madeUpOf.belongsTo(ingredient, { foreignKey: "ingredient_id"});

@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
 class hasSaved extends Sequelize.Model {
   static init(sequelize, DataTypes) {
   super.init({
-    user: {
+    user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
@@ -17,7 +17,7 @@ class hasSaved extends Sequelize.Model {
         key: 'id'
       }
     },
-    recipe: {
+    recipe_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
@@ -36,15 +36,15 @@ class hasSaved extends Sequelize.Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "user" },
-          { name: "recipe" },
+          { name: "user_id" },
+          { name: "recipe_id" },
         ]
       },
       {
         name: "recipe_fk_idx",
         using: "BTREE",
         fields: [
-          { name: "recipe" },
+          { name: "recipe_id" },
         ]
       },
     ]
