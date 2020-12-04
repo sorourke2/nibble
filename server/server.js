@@ -32,7 +32,7 @@ const database = require("./database");
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", [
     "http://localhost:3000",
-    "https://nibble-client.herokuapp.com/register",
+    "https://nibble-client.herokuapp.com",
   ]);
   res.header(
     "Access-Control-Allow-Headers",
