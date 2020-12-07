@@ -1,36 +1,48 @@
-const db = require("../database").db;
-const { initModels } = require("../models/init-models");
+const db = require('../database').db;
+const { initModels } = require('../models/init-models');
 const models = initModels(db.sequelize);
 
 const findAllRecipes = () =>
-  models.recipe.findAll({ include: [models.user] }).then((recipes) => {
-    const safeRecipes = recipes.map((recipe) => {
-      const safeRecipe = recipe.toJSON();
-      delete safeRecipe.user.password;
-      return safeRecipe;
+  models.recipe
+    .findAll({ include: [{ model: models.user, as: 'author_fk' }] })
+    .then((recipes) => {
+      const safeRecipes = recipes.map((recipe) => {
+        const safeRecipe = recipe.toJSON();
+        delete safeRecipe.author_fk.password;
+        safeRecipe.author = safeRecipe.author_fk;
+        delete safeRecipe.author_fk;
+        return safeRecipe;
+      });
+      return safeRecipes;
     });
-    return safeRecipes;
-  });
 
 const findRecipeById = (rid) =>
   models.recipe
     .findByPk(rid, {
-      include: [models.ingredient, models.user, models.dietaryType],
+      include: [
+        models.ingredient,
+        { model: models.user, as: 'author_fk' },
+        models.dietaryType,
+      ],
       required: true,
     })
     .then((recipe) => {
       const safeRecipe = recipe.toJSON();
-      safeRecipe.author = safeRecipe.user;
-      delete safeRecipe.user;
-      delete safeRecipe.author.password;
+      delete safeRecipe.author_fk.password;
+      safeRecipe.author = safeRecipe.author_fk;
+      delete safeRecipe.author_fk;
       return safeRecipe;
     });
 
 const findIngredientsForRecipe = (rid) =>
-  findRecipeById(rid).then((recipe) => recipe.ingredients);
+  findRecipeById(rid, { include: [{ model: models.ingredient }] }).then(
+    (recipe) => recipe.ingredients
+  );
 
 const findDietaryTypesForRecipe = (rid) =>
-  findRecipeById(rid).then((recipe) => recipe.dietaryTypes);
+  findRecipeById(rid, { include: [{ model: models.dietaryType }] }).then(
+    (recipe) => recipe.dietaryTypes
+  );
 
 const createRecipe = (newRecipe) =>
   models.recipe
