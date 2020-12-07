@@ -1,7 +1,7 @@
-const { DataTypes, Model } = require("sequelize");
-const bcrypt = require("bcrypt");
-const sequelize = require("../database").db.sequelize;
-const { initModels } = require("../models/init-models");
+const { DataTypes, Model } = require('sequelize');
+const bcrypt = require('bcrypt');
+const sequelize = require('../database').db.sequelize;
+const { initModels } = require('../models/init-models');
 const models = initModels(sequelize);
 
 const userDao = {
@@ -19,8 +19,8 @@ const userDao = {
           username,
           password: encryptedPassword,
           displayName: username,
-          avatarColor: "#000000",
-          initialsColor: "#FFFFFF",
+          avatarColor: '#000000',
+          initialsColor: '#FFFFFF',
           is_admin: false,
         })
         .then((newUser) => ({ username: newUser.username, id: newUser.id }))
@@ -45,6 +45,8 @@ const userDao = {
       { displayName, avatarColor, initialsColor },
       { where: { id } }
     ),
+
+  findCreatedRecipes: (ruid) => {},
 };
 
 module.exports = {
