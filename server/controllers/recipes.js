@@ -45,6 +45,12 @@ module.exports = function (app) {
       .then((newRecipe) => res.json(newRecipe));
   });
 
+  app.delete('/api/recipes/:rid', (req, res) =>
+    recipesService
+      .deleteRecipe(req.params['rid'])
+      .then((status) => res.json(status))
+  );
+
   app.put('/api/recipes/:rid', (req, res) =>
     recipesService
       .updateRecipe(req.params['rid'], req.body)

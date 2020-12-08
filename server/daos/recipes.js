@@ -9,7 +9,11 @@ const findAllRecipes = () =>
     .findAll({
       include: [
         { model: models.user, as: 'author_fk' },
-        { model: models.dietaryType },
+        {
+          model: models.dietaryType,
+          attributes: ['id', 'name'],
+          through: { attributes: [] },
+        },
         {
           model: models.ingredient,
           attributes: ['id', 'name'],
@@ -20,7 +24,13 @@ const findAllRecipes = () =>
     })
     .then((recipes) => {
       const safeRecipes = recipes.map((recipe) => {
-        const safeRecipe = changeForeignKeyName(recipe, 'author_fk', 'author');
+        let safeRecipe = recipe.toJSON();
+        safeRecipe = changeForeignKeyName(safeRecipe, 'author_fk', 'author');
+        safeRecipe = changeForeignKeyName(
+          safeRecipe,
+          'dietaryTypes',
+          'dietary_types'
+        );
         delete safeRecipe.author.password;
         return safeRecipe;
       });
@@ -38,12 +48,24 @@ const findRecipeById = (rid) =>
           through: { attributes: [] },
         },
         { model: models.user, as: 'author_fk' },
-        models.dietaryType,
+        {
+          model: models.dietaryType,
+          attributes: ['id', 'name'],
+          through: { attributes: [] },
+        },
       ],
       required: true,
     })
     .then((recipe) => {
-      const safeRecipe = changeForeignKeyName(recipe, 'author_fk', 'author');
+      if (recipe == null) {
+        return {};
+      }
+      safeRecipe = changeForeignKeyName(safeRecipe, 'author_fk', 'author');
+      safeRecipe = changeForeignKeyName(
+        safeRecipe,
+        'dietaryTypes',
+        'dietary_types'
+      );
       delete safeRecipe.author.password;
       return safeRecipe;
     });
@@ -59,16 +81,8 @@ const findDietaryTypesForRecipe = (rid) =>
   );
 
 const createRecipe = (newRecipe) => {
-  // Must create the tables for the new recipe stuff assuming that is expect
-  // from this route. Should this all be promised??
   for (const ing of newRecipe.ingredients) {
     ingredientService.createIngredient(ing);
-  }
-  // Trying to make this work lol
-  for (const dietary_type of newRecipe.dietary_types) {
-    models.dietaryType.create(dietary_type, {
-      include: [models.hasDietaryType],
-    });
   }
   return models.recipe
     .create(newRecipe, {
@@ -78,6 +92,16 @@ const createRecipe = (newRecipe) => {
         models.dietaryType,
       ],
       required: true,
+    })
+    .then((recipe) => {
+      for (const dietary_type of newRecipe.dietary_types) {
+        models.dietaryType.findOrCreate(dietary_type).then((diet) => {
+          models.hasDietaryType.findOrCreate({
+            recipe_id: recipe.id,
+            dietary_type_id: diet.id,
+          });
+        });
+      }
     })
     .catch(function (err) {
       console.log(err);
@@ -99,6 +123,12 @@ const updateRecipe = (rid, newRecipe) => {
   });
 };
 
+const deleteRecipe = (rid) => {
+  return models.recipe.destroy({
+    where: { id: rid },
+  });
+};
+
 const truncateRecipe = () =>
   models.recipe.destroy({ truncate: { cascade: true } });
 
@@ -110,4 +140,5 @@ module.exports = {
   createRecipe,
   updateRecipe,
   truncateRecipe,
+  deleteRecipe,
 };
