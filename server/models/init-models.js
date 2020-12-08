@@ -33,7 +33,9 @@ function initModels(sequelize) {
     foreignKey: 'recipe_id',
     otherKey: 'dietary_type_id',
   });
-  dietaryType.hasMany(hasDietaryType, { foreignKey: 'dietary_type_id' });
+  dietaryType.hasMany(hasDietaryType, {
+    foreignKey: 'dietary_type_id',
+  });
   hasSaved.belongsTo(recipe, { foreignKey: 'recipe_id' });
   user.belongsToMany(recipe, {
     through: hasSaved,
