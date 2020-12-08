@@ -60,6 +60,7 @@ const findRecipeById = (rid) =>
       if (recipe == null) {
         return {};
       }
+      var safeRecipe = recipe.toJSON();
       safeRecipe = changeForeignKeyName(safeRecipe, 'author_fk', 'author');
       safeRecipe = changeForeignKeyName(
         safeRecipe,
@@ -109,21 +110,47 @@ const createRecipe = (newRecipe) => {
 };
 
 const updateRecipe = (rid, newRecipe) => {
-  //must update ingredients, registeredUser, and dietaryType seperately
   for (const ing of newRecipe.ingredients) {
-    models.ingredient.update(ing, { where: { id: ing.id } });
+    ingredientService.createIngredient(ing);
   }
-  for (const diet of newRecipe.dietaryTypes) {
-    models.dietaryType.update(diet, { where: { id: diet.id } });
-  }
-  models.recipe.update(newRecipe, {
-    where: {
-      id: rid,
-    },
-  });
+  return models.recipe
+    .update(newRecipe, {
+      where: {
+        id: rid,
+      },
+      include: [
+        { model: models.ingredient, include: [models.measurement] },
+        models.user,
+        models.dietaryType,
+      ],
+      required: true,
+    })
+    .then((_) => {
+      // this works
+      for (const dietary_type of newRecipe.dietary_types) {
+        const did = dietary_type.id;
+        if (did) {
+          return models.dietaryType.update(dietary_type, {
+            where: { id: did },
+          });
+        }
+        models.dietaryType.create(dietary_type).then((diet) => {
+          console.log(diet);
+          models.hasDietaryType.create({
+            recipe_id: newRecipe.id,
+            dietary_type_id: diet.id,
+          });
+        });
+      }
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
 };
 
 const deleteRecipe = (rid) => {
+  // Will the check for admin occur here or client side?
+  // May be easier client side if you have the user in the state
   return models.recipe.destroy({
     where: { id: rid },
   });

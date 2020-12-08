@@ -19,18 +19,6 @@ module.exports = function (app) {
       .then((recipe) => res.json(recipe))
   );
 
-  app.get('/api/recipes/:rid/ingredients', (req, res) =>
-    recipesService
-      .findIngredientsForRecipe(req.params['rid'])
-      .then((ingredients) => res.json(ingredients))
-  );
-
-  app.get('/api/recipes/:rid/dietary-types', (req, res) =>
-    recipesService
-      .findDietaryTypesForRecipe(req.params['rid'])
-      .then((dietaryTypes) => res.json(dietaryTypes))
-  );
-
   app.post('/api/recipes', (req, res) => {
     const token = getTokenFrom(req);
     if (!token) return res.status(401).send({ message: 'token missing' });
@@ -45,15 +33,27 @@ module.exports = function (app) {
       .then((newRecipe) => res.json(newRecipe));
   });
 
-  app.delete('/api/recipes/:rid', (req, res) =>
+  app.delete('/api/recipes/:rid', (req, res) => {
+    const token = getTokenFrom(req);
+    if (!token) return res.status(401).send({ message: 'token missing' });
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    if (!decodedToken.id)
+      return res.status(401).send({ message: 'token invalid' });
+
     recipesService
       .deleteRecipe(req.params['rid'])
-      .then((status) => res.json(status))
-  );
+      .then((status) => res.json(status));
+  });
 
-  app.put('/api/recipes/:rid', (req, res) =>
+  app.put('/api/recipes/:rid', (req, res) => {
+    const token = getTokenFrom(req);
+    if (!token) return res.status(401).send({ message: 'token missing' });
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    if (!decodedToken.id)
+      return res.status(401).send({ message: 'token invalid' });
+
     recipesService
       .updateRecipe(req.params['rid'], req.body)
-      .then((status) => res.send(status))
-  );
+      .then((status) => res.send(status));
+  });
 };
