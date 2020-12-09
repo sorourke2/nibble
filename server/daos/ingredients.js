@@ -13,35 +13,47 @@ const findIngredientById = (iid) =>
 
 const createIngredient = (newIngredient) => {
   const iid = newIngredient.id;
+  const measurement = newIngredient.measurement;
   // Must update ingredient
-  if (iid) {
-    console.log('update ing');
-    const mid = newIngredient.measurement.id;
-    // Must update measurement
-    if (mid) {
-      return models.measurement
-        .update(newIngredient.measurement, { where: { id: mid } })
-        .then((_) => {
-          models.ingredient.update(newIngredient, {
-            where: { id: iid },
-          });
-        });
-    }
-    // Must create measurement
-    return models.measurement.create(newIngredient.measurement).then((_) => {
-      models.ingredient.update(newIngredient, {
-        where: { id: iid },
-        include: [models.measurement],
+  // if (iid) {
+  //   const mid = measurement.id;
+  //   // Must update measurement
+  //   if (mid) {
+  //     return models.measurement
+  //       .update(measurement, { where: { id: mid } })
+  //       .then((_) => {
+  //         return models.ingredient.update(newIngredient, {
+  //           where: { id: iid },
+  //         });
+  //       });
+  //   }
+  //   // Must create measurement
+  // return models.measurement
+  //   .findOrCreate({
+  //     where: { unit: measurement.unit, amount: measurement.amount },
+  //   })
+  //   .then((_) => {
+  //     return models.ingredient.update(newIngredient, {
+  //       where: { id: iid },
+  //       include: [models.measurement],
+  //     });
+  //   });
+  // }
+  // Must create ingredient, this doesn't work
+  return models.measurement
+    .findOrCreate({
+      where: { unit: measurement.unit, amount: measurement.amount },
+    })
+    .then((mes) => {
+      return models.ingredient.findOrCreate({
+        include: [
+          { model: models.measurement, where: newIngredient.measurement },
+        ],
+        where: {
+          name: newIngredient.name,
+        },
       });
     });
-  }
-  // Must create ingredient, this doesn't work
-  return models.measurement.create(newIngredient.measurement).then((_) => {
-    console.log(_);
-    models.ingredient.create(newIngredient, {
-      include: [models.measurement],
-    });
-  });
 };
 
 const findRecipesForIngredient = (iid) =>

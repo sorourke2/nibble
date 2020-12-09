@@ -2,6 +2,8 @@ const db = require('../database').db;
 const ingredientService = require('../services/ingredients');
 const { initModels } = require('../models/init-models');
 const changeForeignKeyName = require('../utils/foreignKey');
+const { create, find } = require('lodash');
+const ingredient = require('../models/ingredient');
 const models = initModels(db.sequelize);
 
 const findAllRecipes = () =>
@@ -96,12 +98,16 @@ const createRecipe = (newRecipe) => {
     })
     .then((recipe) => {
       for (const dietary_type of newRecipe.dietary_types) {
-        models.dietaryType.findOrCreate(dietary_type).then((diet) => {
-          models.hasDietaryType.findOrCreate({
-            recipe_id: recipe.id,
-            dietary_type_id: diet.id,
+        models.dietaryType
+          .findOrCreate({
+            where: { name: dietary_type.name },
+          })
+          .then((diet) => {
+            models.hasDietaryType.create({
+              recipe_id: recipe.id,
+              dietary_type_id: diet[0].id,
+            });
           });
-        });
       }
     })
     .catch(function (err) {
@@ -109,48 +115,59 @@ const createRecipe = (newRecipe) => {
     });
 };
 
-const updateRecipe = (rid, newRecipe) => {
-  for (const ing of newRecipe.ingredients) {
-    ingredientService.createIngredient(ing);
-  }
-  return models.recipe
-    .update(newRecipe, {
-      where: {
-        id: rid,
-      },
-      include: [
-        { model: models.ingredient, include: [models.measurement] },
-        models.user,
-        models.dietaryType,
-      ],
-      required: true,
-    })
-    .then((_) => {
-      // this works
-      for (const dietary_type of newRecipe.dietary_types) {
-        const did = dietary_type.id;
-        if (did) {
-          return models.dietaryType.update(dietary_type, {
-            where: { id: did },
-          });
-        }
-        models.dietaryType.create(dietary_type).then((diet) => {
-          console.log(diet);
-          models.hasDietaryType.create({
-            recipe_id: newRecipe.id,
-            dietary_type_id: diet.id,
-          });
-        });
-      }
-    })
-    .catch(function (err) {
-      console.log(err);
-    });
-};
+// const updateRecipe = (rid, newRecipe) => {
+//   return deleteRecipe(rid).then((_) => {
+//     newRecipe.id = rid;
+//     createRecipe(newRecipe);
+//   });
+// };
+
+const updateRecipe = (rid, newRecipe) =>
+  deleteRecipe(rid).then((status) => {
+    newRecipe.id = rid;
+    return createRecipe(newRecipe);
+  });
+// return models.recipe
+//   .findOne({
+//     where: { id: rid },
+//     include: [
+//       { model: models.ingredient, include: [models.measurement] },
+//       models.user,
+//       models.dietaryType,
+//     ],
+//     required: true,
+//   })
+//   .then((recipe) => {
+//     if (recipe) {
+//       return recipe.update(newRecipe).then((success) => {
+
+//         //   for (let diet of recipe.dietaryTypes) {
+//         //     diet.destroy();
+//         //   }
+//         //   for (let dietary_type of newRecipe.dietary_types) {
+//         //     models.dietaryType.create(dietary_type);
+//         //   }
+//         //   for (let ing of recipe.ingredients) {
+//         //     ing.destroy();
+//         //     ing.measurement.destroy();
+//         //   }
+//         //   models.dietaryType.bulkCreate(dietary_types).then((_) => {
+//         //     for (let ingredient of newRecipe.ingredients) {
+//         //       console.log('create iing');
+//         //       models.measurement.create(ingredient.measurement).then((mes) => {
+//         //         models.ingredient.create(ingredient);
+//         //       });
+//         //     }
+//         //   });
+//         // });
+//       });
+//     }
+//   });
 
 const deleteRecipe = (rid) => {
   // Will the check for admin occur here or client side?
   // May be easier client side if you have the user in the state
+  // foreign keys use ondelete cascade so this should work
   return models.recipe.destroy({
     where: { id: rid },
   });
