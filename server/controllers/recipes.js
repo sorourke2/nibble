@@ -21,6 +21,12 @@ module.exports = function (app) {
       .then((recipe) => res.json(recipe))
   );
 
+  app.get('/api/recipes/:rid/saved-by', (req, res) =>
+    recipesService
+      .findUsersWhoHaveSaved(req.params['rid'])
+      .then((recipe) => res.json(recipe))
+  );
+
   app.post('/api/recipes', (req, res) => {
     const token = getTokenFrom(req);
     if (!token) return res.status(401).send({ message: 'token missing' });

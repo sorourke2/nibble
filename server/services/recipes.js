@@ -8,6 +8,7 @@ findDietaryTypesForRecipe = (rid) => recipesDao.findDietaryTypesForRecipe(rid);
 createRecipe = (newRecipe) => recipesDao.createRecipe(newRecipe);
 updateRecipe = (rid, newRecipe) => recipesDao.updateRecipe(rid, newRecipe);
 deleteRecipe = (rid) => recipesDao.deleteRecipe(rid);
+findUsersWhoHaveSaved = (rid) => recipesDao.findUsersWhoHaveSaved(rid);
 
 module.exports = {
   findAllRecipes,
@@ -17,4 +18,5 @@ module.exports = {
   createRecipe,
   updateRecipe,
   deleteRecipe,
+  findUsersWhoHaveSaved,
 };

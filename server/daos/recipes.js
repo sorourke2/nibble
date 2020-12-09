@@ -152,6 +152,22 @@ const findIngredientsForRecipe = (rid) =>
     (recipe) => recipe.ingredients
   );
 
+const findUsersWhoHaveSaved = (rid) => {
+  console.log(rid);
+  return models.hasSaved
+    .findAll({ where: { recipe_id: rid } })
+    .then((hasSaveds) => {
+      return models.user
+        .findOne({
+          where: { id: hasSaveds.map((h) => h.user_id) },
+        })
+        .then((user) => {
+          delete user.password;
+          return user;
+        });
+    });
+};
+
 const findDietaryTypesForRecipe = (rid) =>
   findRecipeById(rid, { include: [{ model: models.dietaryType }] }).then(
     (recipe) => recipe.dietaryTypes
@@ -220,4 +236,5 @@ module.exports = {
   updateRecipe,
   truncateRecipe,
   deleteRecipe,
+  findUsersWhoHaveSaved,
 };
