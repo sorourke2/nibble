@@ -1,7 +1,7 @@
 const { truncateRecipe } = require('../daos/recipes');
 const recipesDao = require('../daos/recipes');
 
-findAllRecipes = () => recipesDao.findAllRecipes();
+findAllRecipes = (filter) => recipesDao.findAllRecipes(filter);
 findRecipeById = (rid) => recipesDao.findRecipeById(rid);
 findIngredientsForRecipe = (rid) => recipesDao.findIngredientsForRecipe(rid);
 findDietaryTypesForRecipe = (rid) => recipesDao.findDietaryTypesForRecipe(rid);

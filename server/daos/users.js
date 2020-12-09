@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const sequelize = require('../database').db.sequelize;
 const { initModels } = require('../models/init-models');
 const models = initModels(sequelize);
+const changeForeignKeyName = require('../utils/foreignKey');
 
 const userDao = {
   usernameExists: (username) => {
@@ -46,90 +47,86 @@ const userDao = {
       { where: { id } }
     ),
 
-  findCreatedRecipes: (ruid) => {},
+  saveRecipe: (uid, rid) => {
+    return models.hasSaved.create({ user_id: uid, recipe_id: rid });
+  },
+
+  unsaveRecipe: (uid, rid) => {
+    return models.hasSaved.destroy({ where: { user_id: uid, recipe_id: rid } });
+  },
+
+  findSavedRecipes: (uid) => {
+    return models.recipe
+      .findAll({
+        include: [
+          { model: models.user, as: 'author_fk' },
+          {
+            model: models.dietaryType,
+            attributes: ['id', 'name'],
+            through: { attributes: [] },
+          },
+          {
+            model: models.ingredient,
+            attributes: ['id', 'name'],
+            through: { attributes: [] },
+            include: [models.measurement],
+          },
+          { model: models.hasSaved, where: { user_id: uid } },
+        ],
+      })
+      .then((recipes) => {
+        const safeRecipes = recipes.map((recipe) => {
+          let safeRecipe = recipe.toJSON();
+          safeRecipe = changeForeignKeyName(safeRecipe, 'author_fk', 'author');
+          safeRecipe = changeForeignKeyName(
+            safeRecipe,
+            'dietaryTypes',
+            'dietary_types'
+          );
+          delete safeRecipe.author.password;
+          delete safeRecipe.hasSaveds;
+          return safeRecipe;
+        });
+        return safeRecipes;
+      });
+  },
+
+  findCreatedRecipes: (ruid) => {
+    return models.recipe
+      .findAll({
+        include: [
+          { model: models.user, as: 'author_fk' },
+          {
+            model: models.dietaryType,
+            attributes: ['id', 'name'],
+            through: { attributes: [] },
+          },
+          {
+            model: models.ingredient,
+            attributes: ['id', 'name'],
+            through: { attributes: [] },
+            include: [models.measurement],
+          },
+        ],
+        where: { author: ruid },
+      })
+      .then((recipes) => {
+        const safeRecipes = recipes.map((recipe) => {
+          let safeRecipe = recipe.toJSON();
+          safeRecipe = changeForeignKeyName(safeRecipe, 'author_fk', 'author');
+          safeRecipe = changeForeignKeyName(
+            safeRecipe,
+            'dietaryTypes',
+            'dietary_types'
+          );
+          delete safeRecipe.author.password;
+          return safeRecipe;
+        });
+        return safeRecipes;
+      });
+  },
 };
 
 module.exports = {
   ...userDao,
 };
-
-/*
-class User extends Model {}
-User.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    username: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    displayName: {
-      type: DataTypes.STRING,
-    },
-    avatarColor: {
-      type: DataTypes.STRING(7),
-    },
-    initialsColor: {
-      type: DataTypes.STRING(7),
-    },
-  },
-  {
-    sequelize,
-    modelName: "user",
-    freezeTableName: true,
-  }
-);
-
-const usernameExists = (username) => {
-  return User.findOne({ where: { username } }).then((user) => user !== null);
-};
-
-const registerUser = ({ username, password }) => {
-  const saltRounds = 10;
-  return bcrypt.hash(password, saltRounds).then((encryptedPassword) =>
-    User.create({
-      username,
-      password: encryptedPassword,
-      displayName: username,
-      avatarColor: "#000000",
-      initialsColor: "#FFFFFF",
-    }).then((newUser) => ({ username: newUser.username, id: newUser.id }))
-  );
-};
-
-const loginUser = ({ username, password }) =>
-  User.findOne({ where: { username } }).then((savedUser) =>
-    bcrypt.compare(password, savedUser.password).then((match) => ({
-      match,
-      username,
-      id: savedUser.id,
-    }))
-  );
-
-const getUser = ({ id }) => User.findByPk(id);
-
-const updateUser = ({ id, displayName, avatarColor, initialsColor }) =>
-  User.update({ displayName, avatarColor, initialsColor }, { where: { id } });
-
-const syncUser = () => User.sync({ force: true });
-
-const truncateUser = () => User.destroy({ truncate: { cascade: true } });
-
-module.exports = {
-  syncUser,
-  truncateUser,
-  usernameExists,
-  registerUser,
-  loginUser,
-  getUser,
-  updateUser,
-};
-*/

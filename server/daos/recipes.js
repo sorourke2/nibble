@@ -2,27 +2,27 @@ const db = require('../database').db;
 const ingredientService = require('../services/ingredients');
 const { initModels } = require('../models/init-models');
 const changeForeignKeyName = require('../utils/foreignKey');
-const { create, find } = require('lodash');
-const ingredient = require('../models/ingredient');
 const models = initModels(db.sequelize);
 
-const findAllRecipes = () =>
-  models.recipe
+const basicRecipeInclude = [
+  { model: models.user, as: 'author_fk' },
+  {
+    model: models.dietaryType,
+    attributes: ['id', 'name'],
+    through: { attributes: [] },
+  },
+  {
+    model: models.ingredient,
+    attributes: ['id', 'name'],
+    through: { attributes: [] },
+    include: [models.measurement],
+  },
+];
+
+const findAllRecipes = (filter) => {
+  return models.recipe
     .findAll({
-      include: [
-        { model: models.user, as: 'author_fk' },
-        {
-          model: models.dietaryType,
-          attributes: ['id', 'name'],
-          through: { attributes: [] },
-        },
-        {
-          model: models.ingredient,
-          attributes: ['id', 'name'],
-          through: { attributes: [] },
-          include: [models.measurement],
-        },
-      ],
+      include: basicRecipeInclude,
     })
     .then((recipes) => {
       const safeRecipes = recipes.map((recipe) => {
@@ -34,28 +34,102 @@ const findAllRecipes = () =>
           'dietary_types'
         );
         delete safeRecipe.author.password;
-        return safeRecipe;
+        let include = true;
+        filter.name
+          ? (include &= recipe.name.toUpperCase == filter.name.toUpperCase)
+          : include;
+        filter.difficulty
+          ? (include &=
+              recipe.difficulty.toUpperCase == filter.difficulty.toUpperCase)
+          : include;
+        filter.cooking_method
+          ? (include &=
+              recipe.cooking_method.toUpperCase ==
+              filter.cooking_method.toUpperCase)
+          : include;
+        filter.serving_size
+          ? (include &=
+              recipe.serving_size.toUpperCase ==
+              filter.serving_size.toUpperCase)
+          : include;
+        filter.cuisine
+          ? (include &=
+              recipe.cuisine.toUpperCase == filter.cuisine.toUpperCase)
+          : include;
+        filter.minutes_to_make
+          ? (include &=
+              recipe.minutes_to_make.toUpperCase ==
+              filter.minutes_to_make.toUpperCase)
+          : include;
+        filter.image_source
+          ? (include &=
+              recipe.image_source.toUpperCase ==
+              filter.image_source.toUpperCase)
+          : include;
+        filter?.author_fk?.username
+          ? (include &=
+              recipe?.author_fk?.username?.toUpperCase ==
+              filter?.author_fk?.username?.toUpperCase)
+          : include;
+
+        // filter for ingredients, This is an or map so if it includes all
+        // given ingredients it will include this recipe
+        if (filter.ingredients) {
+          if (recipe.ingredients[0]) {
+            outer_found = true;
+          } else {
+            outer_found = false;
+          }
+          for (filter_ingredient of filter.ingredients) {
+            inner_found = false;
+            for (recipe_ingredient of recipe.ingredients) {
+              inner_found |=
+                recipe_ingredient.name.toUpperCase ==
+                  filter_ingredient.name.toUpperCase &&
+                recipe_ingredient.measurement.unit.toUpperCase ==
+                  filter_ingredient?.measurement?.unit?.toUpperCase &&
+                recipe_ingredient?.measurement?.amount?.toUpperCase ==
+                  filter_ingredient?.measurement?.amount?.toUpperCase;
+            }
+            outer_found &= inner_found;
+          }
+          include &= outer_found;
+        }
+
+        // filter for dietary types, This is an or map so if it includes all
+        // given diets it will include this recipe.
+        if (filter.dietary_types) {
+          if (recipe.dietary_types[0]) {
+            outer_found = true;
+          } else {
+            outer_found = false;
+          }
+          for (filter_ingredient of filter.dietary_types) {
+            inner_found = false;
+            for (recipe_ingredient of recipe.dietary_types) {
+              inner_found &=
+                recipe_ingredient.name.toUpperCase ==
+                filter_ingredient.name.toUpperCase;
+            }
+            outer_found |= inner_found;
+          }
+          include &= outer_found;
+        }
+        if (include) {
+          return safeRecipe;
+        }
       });
-      return safeRecipes;
+      // delete recipes that are not included
+      return safeRecipes.filter(function (el) {
+        return el != null;
+      });
     });
+};
 
 const findRecipeById = (rid) =>
   models.recipe
     .findByPk(rid, {
-      include: [
-        {
-          model: models.ingredient,
-          attributes: ['id', 'name'],
-          include: [{ model: models.measurement }],
-          through: { attributes: [] },
-        },
-        { model: models.user, as: 'author_fk' },
-        {
-          model: models.dietaryType,
-          attributes: ['id', 'name'],
-          through: { attributes: [] },
-        },
-      ],
+      include: basicRecipeInclude,
       required: true,
     })
     .then((recipe) => {
@@ -115,54 +189,15 @@ const createRecipe = (newRecipe) => {
     });
 };
 
-// const updateRecipe = (rid, newRecipe) => {
-//   return deleteRecipe(rid).then((_) => {
-//     newRecipe.id = rid;
-//     createRecipe(newRecipe);
-//   });
-// };
-
 const updateRecipe = (rid, newRecipe) =>
+  // Spent far too long figuring out how to update the recipe
+  // and all of its relations while also being able to add in new relations
+  // if needed. That was fucking hard, so here we just delete it and create it
+  // (:
   deleteRecipe(rid).then((status) => {
     newRecipe.id = rid;
     return createRecipe(newRecipe);
   });
-// return models.recipe
-//   .findOne({
-//     where: { id: rid },
-//     include: [
-//       { model: models.ingredient, include: [models.measurement] },
-//       models.user,
-//       models.dietaryType,
-//     ],
-//     required: true,
-//   })
-//   .then((recipe) => {
-//     if (recipe) {
-//       return recipe.update(newRecipe).then((success) => {
-
-//         //   for (let diet of recipe.dietaryTypes) {
-//         //     diet.destroy();
-//         //   }
-//         //   for (let dietary_type of newRecipe.dietary_types) {
-//         //     models.dietaryType.create(dietary_type);
-//         //   }
-//         //   for (let ing of recipe.ingredients) {
-//         //     ing.destroy();
-//         //     ing.measurement.destroy();
-//         //   }
-//         //   models.dietaryType.bulkCreate(dietary_types).then((_) => {
-//         //     for (let ingredient of newRecipe.ingredients) {
-//         //       console.log('create iing');
-//         //       models.measurement.create(ingredient.measurement).then((mes) => {
-//         //         models.ingredient.create(ingredient);
-//         //       });
-//         //     }
-//         //   });
-//         // });
-//       });
-//     }
-//   });
 
 const deleteRecipe = (rid) => {
   // Will the check for admin occur here or client side?

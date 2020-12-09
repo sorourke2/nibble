@@ -13,6 +13,12 @@ const userService = {
 
   getUser: ({ id }) => userDao.getUser({ id }),
 
+  saveRecipe: (uid, rid) => userDao.saveRecipe(uid, rid),
+
+  unsaveRecipe: (uid, rid) => userDao.unsaveRecipe(uid, rid),
+
+  findSavedRecipes: (uid) => userDao.findSavedRecipes(uid),
+
   updateUser: ({ id, displayName, avatarColor, initialsColor }) =>
     userDao.updateUser({ id, displayName, avatarColor, initialsColor }),
 };
