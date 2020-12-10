@@ -85,19 +85,17 @@ const findAllRecipes = (filter) => {
         // filter for dietary types, This is an or map so if it includes all
         // given diets it will include this recipe.
         if (filter.dietary_types) {
-          if (recipe.dietary_types[0]) {
+          if (recipe.dietaryTypes[0]) {
             outer_found = true;
           } else {
             outer_found = false;
           }
-          for (filter_ingredient of filter.dietary_types) {
+          for (filter_diet of filter.dietary_types) {
             inner_found = false;
-            for (recipe_ingredient of recipe.dietary_types) {
-              inner_found &=
-                recipe_ingredient.name.toUpperCase ==
-                filter_ingredient.name.toUpperCase;
+            for (recipe_diet of recipe.dietaryTypes) {
+              inner_found |= recipe_diet.name == filter_diet.name;
             }
-            outer_found |= inner_found;
+            outer_found &= inner_found;
           }
           include &= outer_found;
         }
