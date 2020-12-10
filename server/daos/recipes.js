@@ -35,41 +35,28 @@ const findAllRecipes = (filter) => {
         );
         delete safeRecipe.author.password;
         let include = true;
-        filter.name
-          ? (include &= recipe.name.toUpperCase == filter.name.toUpperCase)
-          : include;
+        filter.name ? (include &= recipe?.name == filter?.name) : include;
         filter.difficulty
-          ? (include &=
-              recipe.difficulty.toUpperCase == filter.difficulty.toUpperCase)
+          ? (include &= recipe?.difficulty == filter?.difficulty)
           : include;
         filter.cooking_method
-          ? (include &=
-              recipe.cooking_method.toUpperCase ==
-              filter.cooking_method.toUpperCase)
+          ? (include &= recipe?.cooking_method == filter?.cooking_method)
           : include;
         filter.serving_size
-          ? (include &=
-              recipe.serving_size.toUpperCase ==
-              filter.serving_size.toUpperCase)
+          ? (include &= recipe?.serving_size == filter?.serving_size)
           : include;
         filter.cuisine
-          ? (include &=
-              recipe.cuisine.toUpperCase == filter.cuisine.toUpperCase)
+          ? (include &= recipe?.cuisine == filter?.cuisine)
           : include;
         filter.minutes_to_make
-          ? (include &=
-              recipe.minutes_to_make.toUpperCase ==
-              filter.minutes_to_make.toUpperCase)
+          ? (include &= recipe?.minutes_to_make == filter?.minutes_to_make)
           : include;
         filter.image_source
-          ? (include &=
-              recipe.image_source.toUpperCase ==
-              filter.image_source.toUpperCase)
+          ? (include &= recipe?.image_source == filter?.image_source)
           : include;
         filter?.author_fk?.username
           ? (include &=
-              recipe?.author_fk?.username?.toUpperCase ==
-              filter?.author_fk?.username?.toUpperCase)
+              recipe?.author_fk?.username == filter?.author_fk?.username)
           : include;
 
         // filter for ingredients, This is an or map so if it includes all
@@ -84,12 +71,11 @@ const findAllRecipes = (filter) => {
             inner_found = false;
             for (recipe_ingredient of recipe.ingredients) {
               inner_found |=
-                recipe_ingredient.name.toUpperCase ==
-                  filter_ingredient.name.toUpperCase &&
-                recipe_ingredient.measurement.unit.toUpperCase ==
-                  filter_ingredient?.measurement?.unit?.toUpperCase &&
-                recipe_ingredient?.measurement?.amount?.toUpperCase ==
-                  filter_ingredient?.measurement?.amount?.toUpperCase;
+                recipe_ingredient?.name == filter_ingredient?.name &&
+                recipe_ingredient?.measurement?.unit ==
+                  filter_ingredient?.measurement?.unit &&
+                recipe_ingredient?.measurement?.amount ==
+                  filter_ingredient?.measurement?.amount;
             }
             outer_found &= inner_found;
           }
