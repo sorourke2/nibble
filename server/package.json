@@ -10,6 +10,9 @@
     "build:client-and-server-bundles": "ng build --prod && ng run angular.io-example:server",
     "webpack:server": "webpack --config webpack.server.config.js --progress --colors"
   },
+  "engines": {
+    "node": "14.15.1"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
