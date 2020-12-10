@@ -5,6 +5,7 @@ import NavBar from "../components/NavBar";
 import SearchResult from "../components/SearchResult";
 import Footer from "../components/Footer";
 import RecipeService from "../services/RecipeService";
+import LoadingBar from "../components/LoadingBar";
 
 const SearchContainer = styled.div`
   text-align: center;
@@ -45,6 +46,12 @@ const SearchButton = styled.button`
   }
 `;
 
+const LoadingContainer = styled.div`
+  margin-left: 40%;
+  margin-top: 20px;
+  width: 20%;
+`;
+
 const ResultsContainer = styled.div`
   margin-top: 40px;
 `;
@@ -62,17 +69,20 @@ const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [oldSearchTerm, setOldSearchTerm] = useState("");
   const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       const searchParams = new URLSearchParams(paramsString);
       const searchQuery = searchParams.get("q");
       if (searchQuery) {
+        setLoading(true);
         setClicked(true);
         setSearchTerm(searchQuery);
         setOldSearchTerm(searchQuery);
         const recipes = await RecipeService.findAllRecipes();
         setResults(recipes);
+        setLoading(false);
       }
     };
     fetchData();
@@ -87,16 +97,18 @@ const SearchPage = () => {
   };
 
   const onSearch = async () => {
+    setLoading(true);
     history.push(`/search?q=${encodeURIComponent(searchTerm)}`);
     setClicked(true);
     setOldSearchTerm(searchTerm);
     const recipes = await RecipeService.findAllRecipes();
     setResults(recipes);
+    setLoading(false);
   };
 
   return (
     <>
-      <NavBar selectedTab="search" loggedIn={true} />
+      <NavBar selectedTab="search" loggedIn />
       <SearchContainer>
         {!clicked && <Prompt>What are you looking for?</Prompt>}
         <SearchBar
@@ -107,6 +119,9 @@ const SearchPage = () => {
           onChange={onSearchChange}
         />
         <SearchButton onClick={onSearch}>Search</SearchButton>
+        <LoadingContainer>
+          <LoadingBar loading={loading} />
+        </LoadingContainer>
         {results && (
           <>
             <ResultsCount>

@@ -18,6 +18,14 @@ const RecipeService = {
     });
     return response.data;
   },
+
+  findRecipeById: async (id) => {
+    const token = getToken();
+    const response = await axios.get(`${url}/${id}`, {
+      headers: { Authorization: token },
+    });
+    return response.data;
+  },
 };
 
 export default RecipeService;

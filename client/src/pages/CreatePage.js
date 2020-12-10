@@ -32,6 +32,7 @@ const CreatePage = () => {
     if (recipeName !== "") {
       const recipe = {
         name: recipeName,
+        ingredients: [],
       };
       await RecipeService.createRecipe(recipe);
       setRecipeName("");
@@ -40,7 +41,7 @@ const CreatePage = () => {
 
   return (
     <>
-      <NavBar selectedTab="create" loggedIn={true} />
+      <NavBar selectedTab="create" loggedIn />
       <Container>
         <div>
           <RecipeNameInput

@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Avatar from "react-avatar";
+import { useHistory } from "react-router-dom";
 
 const CardContainer = styled.div`
   width: 50%;
@@ -10,6 +11,11 @@ const CardContainer = styled.div`
   border: 2px solid black;
   border-radius: 10px;
   font-size: 24px;
+
+  cursor: pointer;
+  :hover {
+    background-color: orchid;
+  }
 `;
 
 const Header = styled.div`
@@ -39,11 +45,13 @@ const SearchResult = ({
     time,
     timeUnit,
     ingredients,
-    user: { displayName, avatarColor, initialsColor },
+    author: { displayName, avatarColor, initialsColor },
   },
 }) => {
+  const history = useHistory();
+
   return (
-    <CardContainer>
+    <CardContainer onClick={() => history.push(`/recipe/${id}`)}>
       <Header>
         <Title>{name}</Title>
         <AvatarContainer>

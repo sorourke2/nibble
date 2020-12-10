@@ -7,7 +7,7 @@ const HomePage = () => {
 
   return isAuthenticated ? (
     <>
-      <NavBar loggedIn={true} />
+      <NavBar loggedIn />
       <Footer />
     </>
   ) : (

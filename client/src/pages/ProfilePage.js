@@ -121,7 +121,7 @@ const ProfilePage = () => {
 
   return (
     <>
-      <NavBar selectedTab="profile" loggedIn={true} />
+      <NavBar selectedTab="profile" loggedIn />
       {user ? (
         <Container>
           <LeftColumn>

@@ -8,6 +8,7 @@ import CreatePage from "./pages/CreatePage";
 import SearchPage from "./pages/SearchPage";
 import ProfilePage from "./pages/ProfilePage";
 import RegisterPage from "./pages/RegisterPage";
+import RecipePage from "./pages/RecipePage";
 
 function App() {
   return (
@@ -22,7 +23,8 @@ function App() {
           component={SearchPage}
         />
         <PrivateRoute path="/create" exact component={CreatePage} />
-        <PrivateRoute path="/profile" exact={true} component={ProfilePage} />
+        <PrivateRoute path="/profile" exact component={ProfilePage} />
+        <PrivateRoute path="/recipe/:id" exact component={RecipePage} />
         <Route component={HomePage} />
       </Switch>
     </Router>
