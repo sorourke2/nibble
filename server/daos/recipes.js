@@ -153,17 +153,17 @@ const findIngredientsForRecipe = (rid) =>
   );
 
 const findUsersWhoHaveSaved = (rid) => {
-  console.log(rid);
   return models.hasSaved
     .findAll({ where: { recipe_id: rid } })
     .then((hasSaveds) => {
       return models.user
-        .findOne({
+        .findAll({
           where: { id: hasSaveds.map((h) => h.user_id) },
         })
         .then((user) => {
-          delete user.password;
-          return user;
+          var safeUser = user;
+          delete safeUser.password;
+          return safeUser;
         });
     });
 };
