@@ -26,6 +26,22 @@ const RecipeService = {
     });
     return response.data;
   },
+
+  isAuthor: async (recipeId) => {
+    const token = getToken();
+    const response = await axios.get(`${url}/author/${recipeId}`, {
+      headers: { Authorization: token },
+    });
+    return response.data;
+  },
+
+  deleteRecipe: async (recipeId) => {
+    const token = getToken();
+    const response = await axios.delete(`${url}/${recipeId}`, {
+      headers: { Authorization: token },
+    });
+    return response.data;
+  },
 };
 
 export default RecipeService;

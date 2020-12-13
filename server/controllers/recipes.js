@@ -1,38 +1,38 @@
-const recipesService = require('../services/recipes');
-const getTokenFrom = require('../utils/token');
-const jwt = require('jsonwebtoken');
+const recipesService = require("../services/recipes");
+const getTokenFrom = require("../utils/token");
+const jwt = require("jsonwebtoken");
 
 module.exports = function (app) {
-  app.get('/api/recipes', (req, res) => {
+  app.get("/api/recipes", (req, res) => {
     const token = getTokenFrom(req);
-    if (!token) return res.status(401).send({ message: 'token missing' });
+    if (!token) return res.status(401).send({ message: "token missing" });
     const decodedToken = jwt.verify(token, process.env.SECRET);
     if (!decodedToken.id)
-      return res.status(401).send({ message: 'token invalid' });
+      return res.status(401).send({ message: "token invalid" });
 
     return recipesService
       .findAllRecipes(req.body)
       .then((recipes) => res.json(recipes));
   });
 
-  app.get('/api/recipes/:rid', (req, res) =>
+  app.get("/api/recipes/:rid", (req, res) =>
     recipesService
-      .findRecipeById(req.params['rid'])
+      .findRecipeById(req.params["rid"])
       .then((recipe) => res.json(recipe))
   );
 
-  app.get('/api/recipes/:rid/saved-by', (req, res) =>
+  app.get("/api/recipes/:rid/saved-by", (req, res) =>
     recipesService
-      .findUsersWhoHaveSaved(req.params['rid'])
+      .findUsersWhoHaveSaved(req.params["rid"])
       .then((recipe) => res.json(recipe))
   );
 
-  app.post('/api/recipes', (req, res) => {
+  app.post("/api/recipes", (req, res) => {
     const token = getTokenFrom(req);
-    if (!token) return res.status(401).send({ message: 'token missing' });
+    if (!token) return res.status(401).send({ message: "token missing" });
     const decodedToken = jwt.verify(token, process.env.SECRET);
     if (!decodedToken.id)
-      return res.status(401).send({ message: 'token invalid' });
+      return res.status(401).send({ message: "token invalid" });
 
     const id = decodedToken.id;
     const recipe = req.body;
@@ -41,27 +41,43 @@ module.exports = function (app) {
       .then((newRecipe) => res.json(newRecipe));
   });
 
-  app.delete('/api/recipes/:rid', (req, res) => {
+  app.delete("/api/recipes/:rid", (req, res) => {
     const token = getTokenFrom(req);
-    if (!token) return res.status(401).send({ message: 'token missing' });
+    if (!token) return res.status(401).send({ message: "token missing" });
     const decodedToken = jwt.verify(token, process.env.SECRET);
     if (!decodedToken.id)
-      return res.status(401).send({ message: 'token invalid' });
+      return res.status(401).send({ message: "token invalid" });
 
     recipesService
-      .deleteRecipe(req.params['rid'])
+      .deleteRecipe(req.params["rid"])
       .then((status) => res.json(status));
   });
 
-  app.put('/api/recipes/:rid', (req, res) => {
+  app.put("/api/recipes/:rid", (req, res) => {
     const token = getTokenFrom(req);
-    if (!token) return res.status(401).send({ message: 'token missing' });
+    if (!token) return res.status(401).send({ message: "token missing" });
     const decodedToken = jwt.verify(token, process.env.SECRET);
     if (!decodedToken.id)
-      return res.status(401).send({ message: 'token invalid' });
+      return res.status(401).send({ message: "token invalid" });
 
     recipesService
-      .updateRecipe(req.params['rid'], req.body)
+      .updateRecipe(req.params["rid"], req.body)
       .then((status) => res.send(status));
+  });
+
+  app.get("/api/recipes/author/:rid", (req, res) => {
+    const token = getTokenFrom(req);
+    if (!token) return res.status(401).send({ message: "token missing" });
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    if (!decodedToken.id)
+      return res.status(401).send({ message: "token invalid" });
+
+    const userId = decodedToken.id;
+    const recipeId = req.params["rid"];
+
+    recipesService.findRecipeById(recipeId).then((recipe) => {
+      const match = recipe.author.id === userId;
+      res.send(match);
+    });
   });
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import styled from "styled-components";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
@@ -16,16 +16,24 @@ const RecipeContainer = styled.div`
 
 const SaveButton = BasicButton({ hoverColor: "lightblue" });
 const UnsaveButton = BasicButton({ hoverColor: "lightblue" });
+const DeleteButton = BasicButton({ hoverColor: "salmon" });
+const ConfirmDeleteButton = BasicButton({ hoverColor: "red" });
+const CancelDeleteButton = styled(BasicButton({ hoverColor: "lightblue" }))`
+  margin-left: 20px;
+`;
 
 const LoadingContainer = styled.div`
   width: 200px;
 `;
 
 const RecipePage = () => {
+  const history = useHistory();
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [saved, setSaved] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
+  const [canDelete, setCanDelete] = useState(false);
+  const [deleteClicked, setDeleteClicked] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +43,8 @@ const RecipePage = () => {
       userSavedRecipes.forEach((savedRecipe) => {
         if (savedRecipe.id === parseInt(id)) hasSaved = true;
       });
+      const isAuthor = await RecipeService.isAuthor(id);
+      setCanDelete(isAuthor);
       setSaved(hasSaved);
       setRecipe(recipeInfo);
     };
@@ -53,6 +63,11 @@ const RecipePage = () => {
     await UserService.unsaveRecipe(id);
     setSaved(false);
     setLoadingSave(false);
+  };
+
+  const onDelete = async () => {
+    await RecipeService.deleteRecipe(id);
+    history.push("/create");
   };
 
   return (
@@ -95,6 +110,32 @@ const RecipePage = () => {
               fgColor={recipe.author.initialsColor}
               size={60}
             />
+            {canDelete && (
+              <>
+                <br />
+                <br />
+                <div>
+                  <DeleteButton onClick={() => setDeleteClicked(true)}>
+                    Delete
+                  </DeleteButton>
+                </div>
+              </>
+            )}
+            {deleteClicked && (
+              <>
+                <br />
+                <div>Are you sure you want to delete this recipe?</div>
+                <br />
+                <div>
+                  <ConfirmDeleteButton onClick={onDelete}>
+                    Yes
+                  </ConfirmDeleteButton>
+                  <CancelDeleteButton onClick={() => setDeleteClicked(false)}>
+                    No
+                  </CancelDeleteButton>
+                </div>
+              </>
+            )}
           </div>
         </RecipeContainer>
       ) : (
