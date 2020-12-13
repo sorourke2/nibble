@@ -35,6 +35,22 @@ const UserService = {
     );
     return response.data;
   },
+
+  findCreatedRecipes: async () => {
+    const token = getToken();
+    const response = await axios.get(`${url}/created-recipes`, {
+      headers: { Authorization: token },
+    });
+    return response.data;
+  },
+
+  findSavedRecipes: async () => {
+    const token = getToken();
+    const response = await axios.get(`${url}/saved-recipes`, {
+      headers: { Authorization: token },
+    });
+    return response.data;
+  },
 };
 
 export default UserService;

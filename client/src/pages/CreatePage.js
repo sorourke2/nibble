@@ -1,12 +1,12 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import styled from "styled-components";
 import BasicButton from "../components/BasicButton";
 import RecipeService from "../services/RecipeService";
 
-const Container = styled.div`
-  margin-bottom: 80px;
+const CreateContainer = styled.div`
   margin-top: 30px;
   text-align: center;
 `;
@@ -23,9 +23,20 @@ const RecipeNameInput = styled.input`
   }
 `;
 
+const HR = styled.hr`
+  margin: 5px 0px;
+  height: 3px;
+  background-color: darkorchid;
+  border: none;
+  border-radius: 10px;
+`;
+
 const CreateButton = BasicButton({ hoverColor: "lightblue" });
+const MyCreatedButton = BasicButton({ hoverColor: "lightblue" });
+const MySavedButton = BasicButton({ hoverColor: "lightblue" });
 
 const CreatePage = () => {
+  const history = useHistory();
   const [recipeName, setRecipeName] = useState("");
   const [difficulty, setDifficulty] = useState("Easy");
   const [cookingMethod, setCookingMethod] = useState("");
@@ -84,7 +95,7 @@ const CreatePage = () => {
   return (
     <>
       <NavBar selectedTab="create" loggedIn />
-      <Container>
+      <CreateContainer>
         <div>
           <RecipeNameInput
             value={recipeName}
@@ -165,7 +176,14 @@ const CreatePage = () => {
         </div>
         <br />
         <CreateButton onClick={onCreate}>Create</CreateButton>
-      </Container>
+      </CreateContainer>
+      <HR />
+      <MyCreatedButton onClick={() => history.push("/created")}>
+        My Created Recipes
+      </MyCreatedButton>
+      <MySavedButton onClick={() => history.push("/saved")}>
+        My Saved Recipes
+      </MySavedButton>
       <Footer />
     </>
   );
