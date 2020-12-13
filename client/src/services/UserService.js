@@ -44,6 +44,14 @@ const UserService = {
     return response.data;
   },
 
+  findCreatedRecipesByUser: async (userId) => {
+    const token = getToken();
+    const response = await axios.get(`${url}/${userId}/created-recipes`, {
+      headers: { Authorization: token },
+    });
+    return response.data;
+  },
+
   findSavedRecipes: async () => {
     const token = getToken();
     const response = await axios.get(`${url}/saved-recipes`, {
@@ -67,6 +75,14 @@ const UserService = {
   unsaveRecipe: async (recipeId) => {
     const token = getToken();
     const response = await axios.delete(`${url}/saved-recipes/${recipeId}`, {
+      headers: { Authorization: token },
+    });
+    return response.data;
+  },
+
+  getUserById: async (userId) => {
+    const token = getToken();
+    const response = await axios.get(`${url}/profile/${userId}`, {
       headers: { Authorization: token },
     });
     return response.data;

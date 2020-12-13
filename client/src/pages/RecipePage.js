@@ -26,6 +26,18 @@ const LoadingContainer = styled.div`
   width: 200px;
 `;
 
+const AvatarContainer = styled.div`
+  display: inline-block;
+  cursor: pointer;
+  margin: 4px;
+
+  :hover {
+    border: 4px solid orchid;
+    border-radius: 4px;
+    margin: 0px;
+  }
+`;
+
 const RecipePage = () => {
   const history = useHistory();
   const { id } = useParams();
@@ -104,12 +116,16 @@ const RecipePage = () => {
           </div>
           <br />
           <div>
-            <Avatar
-              name={recipe.author.displayName}
-              color={recipe.author.avatarColor}
-              fgColor={recipe.author.initialsColor}
-              size={60}
-            />
+            <AvatarContainer
+              onClick={() => history.push(`/user/${recipe.author.id}`)}
+            >
+              <Avatar
+                name={recipe.author.displayName}
+                color={recipe.author.avatarColor}
+                fgColor={recipe.author.initialsColor}
+                size={60}
+              />
+            </AvatarContainer>
             {canDelete && (
               <>
                 <br />

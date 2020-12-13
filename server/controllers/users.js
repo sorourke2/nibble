@@ -57,6 +57,21 @@ module.exports = (app) => {
     });
   });
 
+  app.get("/api/user/profile/:uid", (req, res) => {
+    const token = getTokenFrom(req);
+    if (!token) return res.status(401).send({ message: "token missing" });
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    if (!decodedToken.id)
+      return res.status(401).send({ message: "token invalid" });
+
+    const id = req.params["uid"];
+
+    UserService.getUser({ id }).then((user) => {
+      const safeUser = _.omit(user.toJSON(), "password");
+      res.status(200).send(safeUser);
+    });
+  });
+
   app.get("/api/user/:uid/created-recipes", (req, res) =>
     UserService.findCreatedRecipes(req.params["uid"]).then((created_recipes) =>
       res.json(created_recipes)
