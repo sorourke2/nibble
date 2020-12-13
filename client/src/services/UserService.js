@@ -51,6 +51,26 @@ const UserService = {
     });
     return response.data;
   },
+
+  saveRecipe: async (recipeId) => {
+    const token = getToken();
+    const response = await axios.post(
+      `${url}/saved-recipes`,
+      { id: recipeId },
+      {
+        headers: { Authorization: token },
+      }
+    );
+    return response.data;
+  },
+
+  unsaveRecipe: async (recipeId) => {
+    const token = getToken();
+    const response = await axios.delete(`${url}/saved-recipes/${recipeId}`, {
+      headers: { Authorization: token },
+    });
+    return response.data;
+  },
 };
 
 export default UserService;

@@ -4,24 +4,56 @@ import styled from "styled-components";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import RecipeService from "../services/RecipeService";
+import UserService from "../services/UserService";
 import LoadingBar from "../components/LoadingBar";
 import Avatar from "react-avatar";
+import BasicButton from "../components/BasicButton";
 
 const RecipeContainer = styled.div`
   margin: 50px;
   font-size: 20px;
 `;
 
+const SaveButton = BasicButton({ hoverColor: "lightblue" });
+const UnsaveButton = BasicButton({ hoverColor: "lightblue" });
+
+const LoadingContainer = styled.div`
+  width: 200px;
+`;
+
 const RecipePage = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
+  const [saved, setSaved] = useState(false);
+  const [loadingSave, setLoadingSave] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       const recipeInfo = await RecipeService.findRecipeById(id);
+      const userSavedRecipes = await UserService.findSavedRecipes();
+      let hasSaved = false;
+      userSavedRecipes.forEach((savedRecipe) => {
+        if (savedRecipe.id === parseInt(id)) hasSaved = true;
+      });
+      setSaved(hasSaved);
       setRecipe(recipeInfo);
     };
     fetchData();
   }, [id]);
+
+  const onSave = async () => {
+    setLoadingSave(true);
+    await UserService.saveRecipe(id);
+    setSaved(true);
+    setLoadingSave(false);
+  };
+
+  const onUnsave = async () => {
+    setLoadingSave(true);
+    await UserService.unsaveRecipe(id);
+    setSaved(false);
+    setLoadingSave(false);
+  };
 
   return (
     <>
@@ -45,7 +77,15 @@ const RecipePage = () => {
           ))}
           <br />
           <div>
-            <button>Save</button>
+            {loadingSave ? (
+              <LoadingContainer>
+                <LoadingBar loading={true} />
+              </LoadingContainer>
+            ) : saved ? (
+              <UnsaveButton onClick={onUnsave}>Unsave</UnsaveButton>
+            ) : (
+              <SaveButton onClick={onSave}>Save</SaveButton>
+            )}
           </div>
           <br />
           <div>

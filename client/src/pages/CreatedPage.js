@@ -23,11 +23,14 @@ const LoadingContainer = styled.div`
 
 const CreatedPage = () => {
   const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       const createdRecipes = await UserService.findCreatedRecipes();
       setRecipes(createdRecipes);
+      setLoading(false);
     };
     fetchData();
   }, []);
@@ -37,11 +40,9 @@ const CreatedPage = () => {
       <NavBar loggedIn />
       <Title>Created Recipes</Title>
       <RecipeListContainer>
-        {recipes.length === 0 && (
-          <LoadingContainer>
-            <LoadingBar loading={true} />
-          </LoadingContainer>
-        )}
+        <LoadingContainer>
+          <LoadingBar loading={loading} />
+        </LoadingContainer>
         {recipes.map((recipe) => (
           <SearchResult key={recipe.id} recipe={recipe} />
         ))}
