@@ -51,7 +51,7 @@ const SearchResult = ({
   const history = useHistory();
 
   return (
-    <CardContainer onClick={() => history.push(`/recipe/${id}`)}>
+    <CardContainer onClick={() => history.push(`/recipes/${id}`)}>
       <Header>
         <Title>{name}</Title>
         <AvatarContainer>

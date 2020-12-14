@@ -24,6 +24,14 @@ const UserService = {
     });
     return response.data;
   },
+
+  getUser: async () => {
+    const token = getToken();
+    const response = await axios.get(`${url}`, {
+      headers: { Authorization: token },
+    });
+    return response.data;
+  },
   updateUser: async ({ displayName, avatarColor, initialsColor }) => {
     const token = getToken();
     const response = await axios.put(

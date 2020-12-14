@@ -39,6 +39,14 @@ const RecipeService = {
     return response.data;
   },
 
+  findUsersWhoHaveSaved: async (rid) => {
+    const token = getToken();
+    const response = await axios.get(`${url}/${rid}/saved-by`, {
+      headers: { Authorization: token },
+    });
+    return response.data;
+  },
+
   isAuthor: async (recipeId) => {
     const token = getToken();
     const response = await axios.get(`${url}/author/${recipeId}`, {

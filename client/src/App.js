@@ -27,8 +27,10 @@ function App() {
           component={SearchPage}
         />
         <PrivateRoute path="/create" exact component={CreatePage} />
+        <Route path="/profile/:id" exact component={ProfilePage} />
         <PrivateRoute path="/profile" exact component={ProfilePage} />
         <Route path="/recipe/:id" exact component={RecipePage} />
+        <Route path="/recipes/:id" exact component={RecipePage} />
         <PrivateRoute path="/created" exact component={CreatedPage} />
         <PrivateRoute path="/saved" exact component={SavedPage} />
         <Route path="/user/:id" exact component={UserPage} />

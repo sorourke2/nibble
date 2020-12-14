@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+import { useParams } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import UserService from "../services/UserService";
@@ -8,7 +9,7 @@ import LoadingBar from "../components/LoadingBar";
 import Avatar from "react-avatar";
 import { GithubPicker } from "react-color";
 import BasicButton from "../components/BasicButton";
-
+import SearchResult from "../components/SearchResult";
 const Container = styled.div`
   display: flex;
   margin-bottom: 80px;
@@ -78,21 +79,47 @@ const UserFieldInput = styled.input`
     outline: none;
   }
 `;
+const Title = styled.div`
+  margin-top: 50px;
+  font-size: 24px;
+  text-align: center;
+`;
+
+const RecipeListContainer = styled.div`
+  margin-top: 40px;
+  margin-bottom: 80px;
+`;
+const RecipeListContainerInColumn = styled.div`
+  margin-top: 5px;
+  margin-bottom: 5px;
+`;
 
 const ProfilePage = () => {
+  const { id } = useParams();
   const history = useHistory();
+  const [loading] = useState(false);
   const [user, setUser] = useState(null);
   const [displayName, setDisplayName] = useState("");
   const [avatarColor, setAvatarColor] = useState("");
   const [initialsColor, setInitialsColor] = useState("");
   const [editing, setEditing] = useState(false);
+  const [createdRecipes, setCreatedRecipes] = useState([]);
 
   const getUser = async () => {
-    const user = await UserService.getUser();
+    let user = null;
+    if (id) {
+      user = await UserService.getUserById(id);
+    } else {
+      user = await UserService.getUser();
+    }
     setUser(user);
     setDisplayName(user.displayName);
     setAvatarColor(user.avatarColor);
     setInitialsColor(user.initialsColor);
+    const createdRecipes = await UserService.findCreatedRecipesByUser(
+      id || user.id
+    );
+    setCreatedRecipes(createdRecipes);
   };
 
   useEffect(() => {
@@ -127,77 +154,115 @@ const ProfilePage = () => {
   return (
     <>
       <NavBar selectedTab="profile" loggedIn />
-      {user ? (
-        <Container>
-          <LeftColumn>
-            <AvatarContainer>
-              <Avatar
-                name={displayName}
-                color={avatarColor}
-                fgColor={initialsColor}
-                size={"200px"}
-              />
-              {editing && (
-                <>
-                  <br />
-                  <br />
-                  <GithubPicker
-                    triangle="hide"
-                    onChange={(color) => setAvatarColor(color.hex)}
+      <div>
+        {user ? (
+          <Container>
+            {!id ? (
+              <LeftColumn>
+                <AvatarContainer>
+                  <Avatar
+                    name={displayName}
+                    color={avatarColor}
+                    fgColor={initialsColor}
+                    size={"200px"}
                   />
+                  {editing && (
+                    <>
+                      <br />
+                      <br />
+                      <GithubPicker
+                        triangle="hide"
+                        onChange={(color) => setAvatarColor(color.hex)}
+                      />
+                      <br />
+                      <GithubPicker
+                        colors={["#FFFFFF", "#000000"]}
+                        width="50px"
+                        triangle="hide"
+                        onChange={(color) => setInitialsColor(color.hex)}
+                      />
+                    </>
+                  )}
+                </AvatarContainer>
+              </LeftColumn>
+            ) : (
+              <AvatarContainer>
+                <Avatar
+                  name={displayName}
+                  color={avatarColor}
+                  fgColor={initialsColor}
+                  size={"200px"}
+                />
+              </AvatarContainer>
+            )}
+            {!id ? (
+              <RightColumn>
+                <FieldContainer>
+                  <UserField>Username:</UserField>
+                  <HR />
+                  <UserField>{user.username}</UserField>
                   <br />
-                  <GithubPicker
-                    colors={["#FFFFFF", "#000000"]}
-                    width="50px"
-                    triangle="hide"
-                    onChange={(color) => setInitialsColor(color.hex)}
-                  />
-                </>
-              )}
-            </AvatarContainer>
-          </LeftColumn>
-          <RightColumn>
-            <FieldContainer>
-              <UserField>Username:</UserField>
-              <HR />
-              <UserField>{user.username}</UserField>
-              <br />
-              <UserField>Display Name:</UserField>
-              <HR />
-              {editing ? (
-                <InputContainer>
-                  <UserFieldInput
-                    value={displayName}
-                    onChange={({ target }) => setDisplayName(target.value)}
-                  />
-                </InputContainer>
-              ) : (
-                <UserField>{displayName}</UserField>
-              )}
-              <br />
-              {editing ? (
-                <>
-                  <CancelButton onClick={onCancel}>Cancel</CancelButton>
-                  <SaveButton onClick={onSave}>Save</SaveButton>
-                </>
-              ) : (
-                <EditButton onClick={() => setEditing(true)}>Edit</EditButton>
-              )}
-              <LogoutButton onClick={onLogout}>Log Out</LogoutButton>
-              {user.is_admin === 1 && (
-                <AdminButton onClick={() => history.push("/admin")}>
-                  Admin Page
-                </AdminButton>
-              )}
-            </FieldContainer>
-          </RightColumn>
-        </Container>
-      ) : (
-        <>
-          <LoadingBar loading={true} height={10} />
-          <LogoutButton onClick={onLogout}>Log Out</LogoutButton>
-        </>
-      )}
+                  <UserField>Display Name:</UserField>
+                  <HR />
+                  {editing ? (
+                    <InputContainer>
+                      <UserFieldInput
+                        value={displayName}
+                        onChange={({ target }) => setDisplayName(target.value)}
+                      />
+                    </InputContainer>
+                  ) : (
+                    <UserField>{displayName}</UserField>
+                  )}
+                  <br />
+                  {editing ? (
+                    <>
+                      <CancelButton onClick={onCancel}>Cancel</CancelButton>
+                      <SaveButton onClick={onSave}>Save</SaveButton>
+                    </>
+                  ) : (
+                    <EditButton onClick={() => setEditing(true)}>
+                      Edit
+                    </EditButton>
+                  )}
+                  <LogoutButton onClick={onLogout}>Log Out</LogoutButton>
+                  {user.is_admin === 1 && (
+                    <AdminButton onClick={() => history.push("/admin")}>
+                      Admin Page
+                    </AdminButton>
+                  )}
+                </FieldContainer>
+              </RightColumn>
+            ) : (
+              <RightColumn>
+                <LoadingBar loading={loading} height={10} />
+                <Title>{user.displayName}'s Recipes</Title>
+                <RecipeListContainerInColumn>
+                  {createdRecipes.map((recipe) => (
+                    <SearchResult key={recipe.id} recipe={recipe} />
+                  ))}
+                </RecipeListContainerInColumn>
+              </RightColumn>
+            )}
+          </Container>
+        ) : (
+          <>
+            <LoadingBar loading={true} height={10} />
+            <LogoutButton onClick={onLogout}>Log Out</LogoutButton>
+          </>
+        )}
+        {!id && user && (
+          <div>
+            <LoadingBar loading={loading} height={10} />
+            <Title>{user.displayName}'s Recipes</Title>
+            <RecipeListContainer>
+              {createdRecipes.map((recipe) => (
+                <SearchResult key={recipe.id} recipe={recipe} />
+              ))}
+            </RecipeListContainer>
+          </div>
+        )}
+      </div>
       <Footer />
     </>
   );
