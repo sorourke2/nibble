@@ -247,25 +247,26 @@ const RecipePage = () => {
                 ) : saved ? (
                   <>
                     <UnsaveButton onClick={onUnsave}>Unsave</UnsaveButton>
-                    {canDelete &&
-                      (editing ? (
-                        <>
-                          <CancelEditButton onClick={() => setEditing(false)}>
-                            Cancel Edit
-                          </CancelEditButton>
-                          <FinishEditButton onClick={onUpdateRecipe}>
-                            Finish Edit
-                          </FinishEditButton>
-                        </>
-                      ) : (
-                        <EditButton onClick={() => setEditing(true)}>
-                          Edit
-                        </EditButton>
-                      ))}
                   </>
                 ) : (
                   <SaveButton onClick={onSave}>Save</SaveButton>
                 )}
+                {!loadingSave &&
+                  canDelete &&
+                  (editing ? (
+                    <>
+                      <CancelEditButton onClick={() => setEditing(false)}>
+                        Cancel Edit
+                      </CancelEditButton>
+                      <FinishEditButton onClick={onUpdateRecipe}>
+                        Finish Edit
+                      </FinishEditButton>
+                    </>
+                  ) : (
+                    <EditButton onClick={() => setEditing(true)}>
+                      Edit
+                    </EditButton>
+                  ))}
               </div>
             )}
             <br />
