@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import UserService from "../services/UserService";
 
 const Container = styled.div`
   height: 80px;
@@ -48,6 +49,18 @@ const HighlightedPageLink = styled.a`
 `;
 
 const NavBar = ({ selectedTab, loggedIn = false }) => {
+  const [username, setUsername] = useState("Profile");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (loggedIn) {
+        const user = await UserService.getUser();
+        setUsername(user.username);
+      }
+    };
+    fetchData();
+  }, [loggedIn]);
+
   return (
     <Container>
       <Logo href="/home">
@@ -67,9 +80,11 @@ const NavBar = ({ selectedTab, loggedIn = false }) => {
               <PageLink href="/create">Create</PageLink>
             )}
             {selectedTab === "profile" ? (
-              <HighlightedPageLink href="/profile">Profile</HighlightedPageLink>
+              <HighlightedPageLink href="/profile">
+                {username}
+              </HighlightedPageLink>
             ) : (
-              <PageLink href="/profile">Profile</PageLink>
+              <PageLink href="/profile">{username}</PageLink>
             )}
           </>
         ) : (

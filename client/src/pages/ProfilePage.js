@@ -94,6 +94,11 @@ const RecipeListContainerInColumn = styled.div`
   margin-bottom: 5px;
 `;
 
+const ErrorMessage = styled.div`
+  font-size: 16px;
+  color: red;
+`;
+
 const ProfilePage = () => {
   const { id } = useParams();
   const history = useHistory();
@@ -107,6 +112,7 @@ const ProfilePage = () => {
   const [savedCount, setSavedCount] = useState([]);
   const [loggedIn] = useState(localStorage.getItem("token") !== null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [error, setError] = useState("");
 
   const getUser = useCallback(async () => {
     let user = null;
@@ -148,20 +154,25 @@ const ProfilePage = () => {
   };
 
   const onSave = async () => {
-    setUser(null);
-    setEditing(false);
-    const user = {
-      displayName,
-      avatarColor,
-      initialsColor,
-      id: id,
-    };
-    if (id) {
-      await UserService.updateUserById(user);
+    if (displayName.length === 0) {
+      setError("Display name cannot be empty");
     } else {
-      await UserService.updateUser(user);
+      setError("");
+      setUser(null);
+      setEditing(false);
+      const user = {
+        displayName,
+        avatarColor,
+        initialsColor,
+        id: id,
+      };
+      if (id) {
+        await UserService.updateUserById(user);
+      } else {
+        await UserService.updateUser(user);
+      }
+      await getUser();
     }
-    await getUser();
   };
 
   const onLogout = () => {
@@ -252,6 +263,7 @@ const ProfilePage = () => {
                     <>
                       <CancelButton onClick={onCancel}>Cancel</CancelButton>
                       <SaveButton onClick={onSave}>Save</SaveButton>
+                      {error && <ErrorMessage>{error}</ErrorMessage>}
                     </>
                   ) : (
                     <EditButton onClick={() => setEditing(true)}>

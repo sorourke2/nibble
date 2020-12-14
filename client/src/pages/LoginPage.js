@@ -71,6 +71,8 @@ const LoadingContainer = styled.div`
   background-color: orchid;
 `;
 
+const AdminCheckbox = styled.input``;
+
 const LoginPage = () => {
   const history = useHistory();
   const [username, setUsername] = useState("");
@@ -116,6 +118,11 @@ const LoginPage = () => {
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
+        <div>
+          Admin
+          <AdminCheckbox type="checkbox" />
+        </div>
+        <br />
         {errorMessage && <ErrorPrompt>{errorMessage}</ErrorPrompt>}
         <LoginButton onClick={loginUser}>Log In</LoginButton>
         <LoadingContainer>

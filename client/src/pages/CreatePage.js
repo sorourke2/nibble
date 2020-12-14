@@ -9,10 +9,19 @@ import RecipeService from "../services/RecipeService";
 const CreateContainer = styled.div`
   margin-top: 30px;
   text-align: center;
+  margin-bottom: 80px;
 `;
 
-const RecipeNameInput = styled.input`
+const FieldContainer = styled.div`
+  font-size: 24px;
+  margin-left: 50px;
+  text-align: left;
+`;
+
+const RecipeFieldInput = styled.input`
   width: 400px;
+  margin-right: 20px;
+  margin-left: 10px;
   font-size: 24px;
   padding: 4px;
   border: 2px solid black;
@@ -22,6 +31,36 @@ const RecipeNameInput = styled.input`
     outline: none;
   }
 `;
+
+const RecipeSelectInput = styled.select`
+  width: 100px;
+  margin-right: 20px;
+  margin-left: 10px;
+  font-size: 24px;
+  padding: 4px;
+  border: 2px solid black;
+  border-radius: 4px;
+
+  :focus {
+    outline: none;
+  }
+`;
+
+const RecipeNumberInput = styled.input`
+  width: 100px;
+  font-size: 24px;
+  margin-right: 20px;
+  margin-left: 10px;
+  padding: 4px;
+  border: 2px solid black;
+  border-radius: 4px;
+
+  :focus {
+    outline: none;
+  }
+`;
+
+const AddIngredientButton = BasicButton({ hoverColor: "lightblue" });
 
 const HR = styled.hr`
   margin: 5px 0px;
@@ -33,7 +72,9 @@ const HR = styled.hr`
 
 const CreateButton = BasicButton({ hoverColor: "lightblue" });
 const MyCreatedButton = BasicButton({ hoverColor: "lightblue" });
-const MySavedButton = BasicButton({ hoverColor: "lightblue" });
+const MySavedButton = styled(BasicButton({ hoverColor: "lightblue" }))`
+  margin-left: 30px;
+`;
 
 const CreatePage = () => {
   const history = useHistory();
@@ -96,94 +137,115 @@ const CreatePage = () => {
     <>
       <NavBar selectedTab="create" loggedIn />
       <CreateContainer>
-        <div>
-          <RecipeNameInput
-            value={recipeName}
-            autoFocus
-            placeholder="New Recipe"
-            onChange={({ target }) => setRecipeName(target.value)}
-          />
+        <FieldContainer>
+          <div>
+            Name:
+            <RecipeFieldInput
+              value={recipeName}
+              autoFocus
+              placeholder="Peach Cobbler"
+              onChange={({ target }) => setRecipeName(target.value)}
+            />
+          </div>
+          <br />
           <div>
             Difficulty:
-            <select
+            <RecipeSelectInput
               value={difficulty}
               onChange={({ target }) => setDifficulty(target.value)}
             >
               <option value="Easy">Easy</option>
               <option value="Medium">Medium</option>
               <option value="Hard">Hard</option>
-            </select>
+            </RecipeSelectInput>
           </div>
+          <br />
           <div>
             Cooking Method:
-            <input
+            <RecipeFieldInput
               value={cookingMethod}
+              placeholder="Oven Bake"
               onChange={({ target }) => setCookingMethod(target.value)}
             />
           </div>
+          <br />
           <div>
             Serving Size:
-            <input
+            <RecipeFieldInput
               type="number"
               value={servingSize}
               onChange={({ target }) => setServingSize(target.value)}
             />
           </div>
+          <br />
           <div>
             Cuisine:
-            <input
+            <RecipeFieldInput
               value={cuisine}
+              placeholder="American"
               onChange={({ target }) => setCuisine(target.value)}
             />
           </div>
+          <br />
           <div>
             Minutes to Make:
-            <input
+            <RecipeFieldInput
               type="number"
               value={minutes}
               onChange={({ target }) => setMinutes(target.value)}
             />
           </div>
           {ingredients.map((ingredient, index) => (
-            <div key={index}>
-              Ingredient Name:{" "}
-              <input
-                value={ingredient.name}
-                onChange={({ target }) =>
-                  changeIngredientField(target.value, index, "name")
-                }
-              />
-              Unit:{" "}
-              <input
-                value={ingredient.measurement.unit}
-                onChange={({ target }) =>
-                  changeIngredientField(target.value, index, "unit")
-                }
-              />
-              Amount:{" "}
-              <input
-                type="number"
-                value={ingredient.measurement.amount}
-                onChange={({ target }) =>
-                  changeIngredientField(target.value, index, "amount")
-                }
-              />
-            </div>
+            <>
+              <br />
+              <div key={index}>
+                Ingredient Name:{" "}
+                <RecipeFieldInput
+                  value={ingredient.name}
+                  placeholder="Peaches"
+                  onChange={({ target }) =>
+                    changeIngredientField(target.value, index, "name")
+                  }
+                />
+                Unit:{" "}
+                <RecipeNumberInput
+                  value={ingredient.measurement.unit}
+                  placeholder="Canned"
+                  onChange={({ target }) =>
+                    changeIngredientField(target.value, index, "unit")
+                  }
+                />
+                Amount:{" "}
+                <RecipeNumberInput
+                  type="number"
+                  value={ingredient.measurement.amount}
+                  onChange={({ target }) =>
+                    changeIngredientField(target.value, index, "amount")
+                  }
+                />
+              </div>
+            </>
           ))}
+          <br />
           <div>
-            <button onClick={addIngredient}>Add Ingredient</button>
+            <AddIngredientButton onClick={addIngredient}>
+              Add Ingredient
+            </AddIngredientButton>
           </div>
-        </div>
+        </FieldContainer>
         <br />
         <CreateButton onClick={onCreate}>Create</CreateButton>
+        <br />
+        <br />
+        <HR />
+        <br />
+        <MyCreatedButton onClick={() => history.push("/created")}>
+          My Created Recipes
+        </MyCreatedButton>
+        <MySavedButton onClick={() => history.push("/saved")}>
+          My Saved Recipes
+        </MySavedButton>
       </CreateContainer>
-      <HR />
-      <MyCreatedButton onClick={() => history.push("/created")}>
-        My Created Recipes
-      </MyCreatedButton>
-      <MySavedButton onClick={() => history.push("/saved")}>
-        My Saved Recipes
-      </MySavedButton>
       <Footer />
     </>
   );
