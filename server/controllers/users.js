@@ -58,12 +58,6 @@ module.exports = (app) => {
   });
 
   app.get("/api/user/profile/:uid", (req, res) => {
-    const token = getTokenFrom(req);
-    if (!token) return res.status(401).send({ message: "token missing" });
-    const decodedToken = jwt.verify(token, process.env.SECRET);
-    if (!decodedToken.id)
-      return res.status(401).send({ message: "token invalid" });
-
     const id = req.params["uid"];
 
     UserService.getUser({ id }).then((user) => {

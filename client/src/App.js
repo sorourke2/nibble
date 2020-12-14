@@ -21,17 +21,17 @@ function App() {
         <Route path={["/", "/home"]} exact component={HomePage} />
         <Route path="/login" exact component={LoginPage} />
         <Route path="/register" exact component={RegisterPage} />
-        <PrivateRoute
+        <Route
           path={["/search", "/search?:queryString"]}
           exact
           component={SearchPage}
         />
         <PrivateRoute path="/create" exact component={CreatePage} />
         <PrivateRoute path="/profile" exact component={ProfilePage} />
-        <PrivateRoute path="/recipe/:id" exact component={RecipePage} />
+        <Route path="/recipe/:id" exact component={RecipePage} />
         <PrivateRoute path="/created" exact component={CreatedPage} />
         <PrivateRoute path="/saved" exact component={SavedPage} />
-        <PrivateRoute path="/user/:id" exact component={UserPage} />
+        <Route path="/user/:id" exact component={UserPage} />
         <PrivateRoute path="/admin" exact component={AdminPage} />
         <Route component={HomePage} />
       </Switch>

@@ -41,6 +41,7 @@ const AvatarContainer = styled.div`
 const RecipePage = () => {
   const history = useHistory();
   const { id } = useParams();
+  const [loggedIn] = useState(localStorage.getItem("token") !== null);
   const [recipe, setRecipe] = useState(null);
   const [saved, setSaved] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
@@ -50,18 +51,20 @@ const RecipePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       const recipeInfo = await RecipeService.findRecipeById(id);
-      const userSavedRecipes = await UserService.findSavedRecipes();
-      let hasSaved = false;
-      userSavedRecipes.forEach((savedRecipe) => {
-        if (savedRecipe.id === parseInt(id)) hasSaved = true;
-      });
-      const isAuthor = await RecipeService.isAuthor(id);
-      setCanDelete(isAuthor);
-      setSaved(hasSaved);
+      if (loggedIn) {
+        const userSavedRecipes = await UserService.findSavedRecipes();
+        let hasSaved = false;
+        userSavedRecipes.forEach((savedRecipe) => {
+          if (savedRecipe.id === parseInt(id)) hasSaved = true;
+        });
+        const isAuthor = await RecipeService.isAuthor(id);
+        setCanDelete(isAuthor);
+        setSaved(hasSaved);
+      }
       setRecipe(recipeInfo);
     };
     fetchData();
-  }, [id]);
+  }, [id, loggedIn]);
 
   const onSave = async () => {
     setLoadingSave(true);
@@ -103,17 +106,19 @@ const RecipePage = () => {
             </div>
           ))}
           <br />
-          <div>
-            {loadingSave ? (
-              <LoadingContainer>
-                <LoadingBar loading={true} />
-              </LoadingContainer>
-            ) : saved ? (
-              <UnsaveButton onClick={onUnsave}>Unsave</UnsaveButton>
-            ) : (
-              <SaveButton onClick={onSave}>Save</SaveButton>
-            )}
-          </div>
+          {loggedIn && (
+            <div>
+              {loadingSave ? (
+                <LoadingContainer>
+                  <LoadingBar loading={true} />
+                </LoadingContainer>
+              ) : saved ? (
+                <UnsaveButton onClick={onUnsave}>Unsave</UnsaveButton>
+              ) : (
+                <SaveButton onClick={onSave}>Save</SaveButton>
+              )}
+            </div>
+          )}
           <br />
           <div>
             <AvatarContainer
