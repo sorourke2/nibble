@@ -17,13 +17,6 @@ const UserService = {
     });
     return response.data;
   },
-  getUser: async () => {
-    const token = getToken();
-    const response = await axios.get(`${url}`, {
-      headers: { Authorization: token },
-    });
-    return response.data;
-  },
 
   getUser: async () => {
     const token = getToken();
@@ -46,10 +39,6 @@ const UserService = {
 
   updateUserById: async ({ displayName, avatarColor, initialsColor, id }) => {
     const token = getToken();
-    console.log(id);
-    console.log(id);
-    console.log(id);
-    console.log(id);
     const response = await axios.put(
       `${url}/${id}`,
       { displayName, avatarColor, initialsColor },

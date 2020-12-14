@@ -70,8 +70,11 @@ module.exports = function (app) {
     if (!decodedToken.id)
       return res.status(401).send({ message: "token invalid" });
 
+    const userId = decodedToken.id;
+    const is_admin = decodedToken.is_admin;
+
     recipesService
-      .updateRecipe(req.params["rid"], req.body)
+      .updateRecipe(req.params["rid"], req.body, userId, is_admin)
       .then((status) => res.send(status));
   });
 

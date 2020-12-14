@@ -16,18 +16,30 @@ const Container = styled.div`
 
 const LeftColumn = styled.div`
   flex: 1;
+  margin-left: 30px;
+  margin-top: 30px;
   font-size: 24px;
   border-right: 1px solid black;
 `;
 
 const RightColumn = styled.div`
-  flex: 3;
-  margin-left: 3em;
+  flex: 1;
+  margin-left: 30px;
+  margin-top: 30px;
   font-size: 24px;
 `;
 
 const SaveButton = BasicButton({ hoverColor: "lightblue" });
 const UnsaveButton = BasicButton({ hoverColor: "lightblue" });
+const EditButton = styled(BasicButton({ hoverColor: "lightblue" }))`
+  margin-left: 20px;
+`;
+const FinishEditButton = styled(BasicButton({ hoverColor: "lightblue" }))`
+  margin-left: 20px;
+`;
+const CancelEditButton = styled(BasicButton({ hoverColor: "lightblue" }))`
+  margin-left: 20px;
+`;
 const DeleteButton = BasicButton({ hoverColor: "salmon" });
 const ConfirmDeleteButton = BasicButton({ hoverColor: "red" });
 const CancelDeleteButton = styled(BasicButton({ hoverColor: "lightblue" }))`
@@ -50,6 +62,10 @@ const AvatarContainer = styled.div`
   }
 `;
 
+const RecipeFieldInput = styled.input`
+  font-size: 20px;
+`;
+
 const RecipePage = () => {
   const history = useHistory();
   const { id } = useParams();
@@ -60,6 +76,16 @@ const RecipePage = () => {
   const [loadingSave, setLoadingSave] = useState(false);
   const [canDelete, setCanDelete] = useState(false);
   const [deleteClicked, setDeleteClicked] = useState(false);
+
+  // for editing
+  const [editing, setEditing] = useState(false);
+  const [recipeName, setRecipeName] = useState("");
+  const [difficulty, setDifficulty] = useState("");
+  const [cookingMethod, setCookingMethod] = useState("");
+  const [servingSize, setServingSize] = useState(0);
+  const [cuisine, setCuisine] = useState("");
+  const [minutes, setMinutes] = useState(0);
+  const [ingredients, setIngredients] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,6 +102,13 @@ const RecipePage = () => {
         setSaved(hasSaved);
       }
       setRecipe(recipeInfo);
+      setRecipeName(recipeInfo.name);
+      setDifficulty(recipeInfo.difficulty);
+      setCookingMethod(recipeInfo.cooking_method);
+      setServingSize(recipeInfo.serving_size);
+      setCuisine(recipeInfo.cuisine);
+      setMinutes(recipeInfo.minutes_to_make);
+      setIngredients(recipeInfo.ingredients);
       setSavedBy(users);
     };
     fetchData();
@@ -99,6 +132,25 @@ const RecipePage = () => {
     setLoadingSave(false);
   };
 
+  const onUpdateRecipe = async () => {
+    setLoadingSave(true);
+    const newRecipe = {
+      name: recipeName,
+      difficulty,
+      cooking_method: cookingMethod,
+      serving_size: servingSize,
+      cuisine,
+      minutes_to_make: minutes,
+      ingredients,
+      dietary_types: [],
+    };
+    await RecipeService.updateRecipe(id, newRecipe);
+    const recipeInfo = await RecipeService.findRecipeById(id);
+    setRecipe(recipeInfo);
+    setEditing(false);
+    setLoadingSave(false);
+  };
+
   const onDelete = async () => {
     await RecipeService.deleteRecipe(id);
     history.push("/create");
@@ -110,21 +162,81 @@ const RecipePage = () => {
       {recipe ? (
         <Container>
           <LeftColumn>
-            <div>Name: {recipe.name}</div>
-            <div>Difficulty: {recipe.difficulty}</div>
-            <div>Cooking Method: {recipe.cooking_method}</div>
-            <div>Serving Size: {recipe.serving_size}</div>
-            <div>Cuisine: {recipe.cuisine}</div>
-            <div>Cooking Time (minutes): {recipe.minutes_to_make}</div>
-            <div>Author: {recipe.author.displayName}</div>
-            <div>Ingredients: </div>
-            {recipe.ingredients.map((ingredient) => (
-              <div key={ingredient.id}>
-                <b>- </b>
-                {ingredient.measurement.amount} {ingredient.measurement.unit}{" "}
-                {ingredient.name}
-              </div>
-            ))}
+            {editing ? (
+              <>
+                <div>
+                  Name:{" "}
+                  <RecipeFieldInput
+                    value={recipeName}
+                    onChange={({ target }) => setRecipeName(target.value)}
+                  />
+                </div>
+                <div>
+                  Difficulty:{" "}
+                  <RecipeFieldInput
+                    value={difficulty}
+                    onChange={({ target }) => setDifficulty(target.value)}
+                  />
+                </div>
+                <div>
+                  Cooking Method:{" "}
+                  <RecipeFieldInput
+                    value={cookingMethod}
+                    onChange={({ target }) => setCookingMethod(target.value)}
+                  />
+                </div>
+                <div>
+                  Serving Size:{" "}
+                  <RecipeFieldInput
+                    type="number"
+                    value={servingSize}
+                    onChange={({ target }) => setServingSize(target.value)}
+                  />
+                </div>
+                <div>
+                  Cuisine:{" "}
+                  <RecipeFieldInput
+                    value={cuisine}
+                    onChange={({ target }) => setCuisine(target.value)}
+                  />
+                </div>
+                <div>
+                  Cooking Time (minutes):{" "}
+                  <RecipeFieldInput
+                    type="number"
+                    value={minutes}
+                    onChange={({ target }) => setMinutes(target.value)}
+                  />
+                </div>
+                <div>Author: {recipe.author.displayName}</div>
+                <div>Ingredients: </div>
+                {recipe.ingredients.map((ingredient) => (
+                  <div key={ingredient.id}>
+                    <b>- </b>
+                    {ingredient.measurement.amount}{" "}
+                    {ingredient.measurement.unit} {ingredient.name}
+                  </div>
+                ))}
+              </>
+            ) : (
+              <>
+                <div>Name: {recipe.name}</div>
+                <div>Difficulty: {recipe.difficulty}</div>
+                <div>Cooking Method: {recipe.cooking_method}</div>
+                <div>Serving Size: {recipe.serving_size}</div>
+                <div>Cuisine: {recipe.cuisine}</div>
+                <div>Cooking Time (minutes): {recipe.minutes_to_make}</div>
+                <div>Author: {recipe.author.displayName}</div>
+                <div>Ingredients: </div>
+                {recipe.ingredients.map((ingredient) => (
+                  <div key={ingredient.id}>
+                    <b>- </b>
+                    {ingredient.measurement.amount}{" "}
+                    {ingredient.measurement.unit} {ingredient.name}
+                  </div>
+                ))}
+              </>
+            )}
             <br />
             {loggedIn && (
               <div>
@@ -133,7 +245,23 @@ const RecipePage = () => {
                     <LoadingBar loading={true} />
                   </LoadingContainer>
                 ) : saved ? (
-                  <UnsaveButton onClick={onUnsave}>Unsave</UnsaveButton>
+                  <>
+                    <UnsaveButton onClick={onUnsave}>Unsave</UnsaveButton>
+                    {editing ? (
+                      <>
+                        <CancelEditButton onClick={() => setEditing(false)}>
+                          Cancel Edit
+                        </CancelEditButton>
+                        <FinishEditButton onClick={onUpdateRecipe}>
+                          Finish Edit
+                        </FinishEditButton>
+                      </>
+                    ) : (
+                      <EditButton onClick={() => setEditing(true)}>
+                        Edit
+                      </EditButton>
+                    )}
+                  </>
                 ) : (
                   <SaveButton onClick={onSave}>Save</SaveButton>
                 )}
@@ -186,6 +314,7 @@ const RecipePage = () => {
                 {savedBy.map((user) => (
                   <AvatarContainer
                     onClick={() => history.push(`/profile/${user.id}`)}
+                    key={user.id}
                   >
                     <Avatar
                       name={user.displayName}

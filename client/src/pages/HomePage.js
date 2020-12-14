@@ -49,7 +49,6 @@ const HomePage = () => {
       if (isAuthenticated) {
         const user = await UserService.getUser();
         setName(user.displayName);
-        console.log(recipes.length);
         setRecipeCount(recipes.length);
         setfeaturedRecipe(recipes[recipes.length - 1]);
         const createdRecipes = await UserService.findCreatedRecipes();

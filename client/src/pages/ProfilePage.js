@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
@@ -108,7 +108,7 @@ const ProfilePage = () => {
   const [loggedIn] = useState(localStorage.getItem("token") !== null);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const getUser = async () => {
+  const getUser = useCallback(async () => {
     let user = null;
     if (id) {
       user = await UserService.getUserById(id);
@@ -122,7 +122,6 @@ const ProfilePage = () => {
     const createdRecipes = await UserService.findCreatedRecipesByUser(
       id || user.id
     );
-    console.log(loggedIn);
     if (loggedIn) {
       const loggedInUserSavedRecipes = await UserService.findSavedRecipes();
       const createdRecipesIds = createdRecipes.map((r) => r.id);
@@ -134,14 +133,14 @@ const ProfilePage = () => {
       setSavedCount(sharedRecipes.length);
     }
     setCreatedRecipes(createdRecipes);
-  };
+  }, [id, loggedIn]);
 
   useEffect(() => {
     const fetchData = async () => {
       await getUser();
     };
     fetchData();
-  }, []);
+  }, [getUser]);
 
   const onCancel = () => {
     setEditing(false);

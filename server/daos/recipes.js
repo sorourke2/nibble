@@ -208,15 +208,26 @@ const createRecipe = (newRecipe) => {
     });
 };
 
-const updateRecipe = (rid, newRecipe) =>
+const updateRecipe = (recipeId, newRecipe, userId, is_admin) => {
   // Spent far too long figuring out how to update the recipe
   // and all of its relations while also being able to add in new relations
   // if needed. That was fucking hard, so here we just delete it and create it
   // (:
-  deleteRecipe(rid).then((status) => {
-    newRecipe.id = rid;
-    return createRecipe(newRecipe);
+  // return deleteRecipe(recipeId, userId, is_admin).then((status) => {
+  //   newRecipe.id = recipeId;
+  //   return createRecipe(newRecipe);
+  // });
+  return models.recipe.findByPk(recipeId).then((recipe) => {
+    recipe.name = newRecipe.name;
+    recipe.difficulty = newRecipe.difficulty;
+    recipe.cooking_method = newRecipe.cooking_method;
+    recipe.serving_size = newRecipe.serving_size;
+    recipe.cuisine = newRecipe.cuisine;
+    recipe.minutes_to_make = newRecipe.minutes_to_make;
+
+    return recipe.save();
   });
+};
 
 const deleteRecipe = (rid, userId, is_admin) => {
   if (is_admin === 1) {

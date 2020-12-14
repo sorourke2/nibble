@@ -55,6 +55,14 @@ const RecipeService = {
     return response.data;
   },
 
+  updateRecipe: async (recipeId, recipe) => {
+    const token = getToken();
+    const response = await axios.put(`${url}/${recipeId}`, recipe, {
+      headers: { Authorization: token },
+    });
+    return response.data;
+  },
+
   deleteRecipe: async (recipeId) => {
     const token = getToken();
     const response = await axios.delete(`${url}/${recipeId}`, {
