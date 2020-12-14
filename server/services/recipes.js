@@ -2,6 +2,7 @@ const { truncateRecipe } = require("../daos/recipes");
 const recipesDao = require("../daos/recipes");
 
 findAllRecipes = (filter) => recipesDao.findAllRecipes(filter);
+searchRecipes = (searchTerm) => recipesDao.searchRecipes(searchTerm);
 findRecipeById = (rid) => recipesDao.findRecipeById(rid);
 findIngredientsForRecipe = (rid) => recipesDao.findIngredientsForRecipe(rid);
 findDietaryTypesForRecipe = (rid) => recipesDao.findDietaryTypesForRecipe(rid);
@@ -13,6 +14,7 @@ findUsersWhoHaveSaved = (rid) => recipesDao.findUsersWhoHaveSaved(rid);
 
 module.exports = {
   findAllRecipes,
+  searchRecipes,
   findRecipeById,
   findIngredientsForRecipe,
   findDietaryTypesForRecipe,

@@ -3,6 +3,7 @@ const ingredientService = require("../services/ingredients");
 const { initModels } = require("../models/init-models");
 const changeForeignKeyName = require("../utils/foreignKey");
 const models = initModels(db.sequelize);
+const { Op } = require("sequelize");
 
 const basicRecipeInclude = [
   { model: models.user, as: "author_fk" },
@@ -110,6 +111,24 @@ const findAllRecipes = (filter) => {
     });
 };
 
+const searchRecipes = (searchTerm) =>
+  models.recipe
+    .findAll({
+      include: { model: models.user, as: "author_fk" },
+      where: {
+        name: { [Op.like]: `%${searchTerm}%` },
+      },
+    })
+    .then((recipes) => {
+      const safeRecipes = recipes.map((recipe) => {
+        let safeRecipe = recipe.toJSON();
+        safeRecipe = changeForeignKeyName(safeRecipe, "author_fk", "author");
+        delete safeRecipe.author.password;
+        return safeRecipe;
+      });
+      return safeRecipes;
+    });
+
 const findRecipeById = (rid) =>
   models.recipe
     .findByPk(rid, {
@@ -216,6 +235,7 @@ const truncateRecipe = () =>
 
 module.exports = {
   findAllRecipes,
+  searchRecipes,
   findRecipeById,
   findDietaryTypesForRecipe,
   findIngredientsForRecipe,

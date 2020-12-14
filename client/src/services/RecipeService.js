@@ -11,6 +11,18 @@ const RecipeService = {
     return response.data;
   },
 
+  searchRecipes: async (searchTerm) => {
+    const token = getToken();
+    const response = await axios.post(
+      `${url}/search`,
+      { searchTerm },
+      {
+        headers: { Authorization: token },
+      }
+    );
+    return response.data;
+  },
+
   createRecipe: async (recipe) => {
     const token = getToken();
     const response = await axios.post(`${url}`, recipe, {

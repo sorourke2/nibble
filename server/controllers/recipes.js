@@ -15,6 +15,20 @@ module.exports = function (app) {
       .then((recipes) => res.json(recipes));
   });
 
+  app.post("/api/recipes/search", (req, res) => {
+    const token = getTokenFrom(req);
+    if (!token) return res.status(401).send({ message: "token missing" });
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    if (!decodedToken.id)
+      return res.status(401).send({ message: "token invalid" });
+
+    const { searchTerm } = req.body;
+
+    return recipesService
+      .searchRecipes(searchTerm)
+      .then((recipes) => res.json(recipes));
+  });
+
   app.get("/api/recipes/:rid", (req, res) =>
     recipesService
       .findRecipeById(req.params["rid"])

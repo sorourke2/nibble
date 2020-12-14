@@ -80,7 +80,7 @@ const SearchPage = () => {
         setClicked(true);
         setSearchTerm(searchQuery);
         setOldSearchTerm(searchQuery);
-        const recipes = await RecipeService.findAllRecipes();
+        const recipes = await RecipeService.searchRecipes(searchQuery);
         setResults(recipes);
         setLoading(false);
       }
@@ -101,7 +101,7 @@ const SearchPage = () => {
     history.push(`/search?q=${encodeURIComponent(searchTerm)}`);
     setClicked(true);
     setOldSearchTerm(searchTerm);
-    const recipes = await RecipeService.findAllRecipes();
+    const recipes = await RecipeService.searchRecipes(searchTerm);
     setResults(recipes);
     setLoading(false);
   };
