@@ -88,7 +88,7 @@ const LoginPage = () => {
       const user = await UserService.loginUser(username, password);
       localStorage.setItem("token", user.token);
       setLoading(false);
-      history.push("/search");
+      history.push("/home");
     } catch (error) {
       setLoading(false);
       setErrorMessage(error.response.data.message);
