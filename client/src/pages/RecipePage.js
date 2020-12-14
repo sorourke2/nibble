@@ -29,6 +29,7 @@ const RightColumn = styled.div`
   font-size: 24px;
 `;
 
+const DeleteIngredientButton = BasicButton({ hoverColor: "salmon" });
 const SaveButton = BasicButton({ hoverColor: "lightblue" });
 const UnsaveButton = BasicButton({ hoverColor: "lightblue" });
 const EditButton = styled(BasicButton({ hoverColor: "lightblue" }))`
@@ -86,6 +87,7 @@ const RecipePage = () => {
   const [cuisine, setCuisine] = useState("");
   const [minutes, setMinutes] = useState(0);
   const [ingredients, setIngredients] = useState([]);
+  const [ingredientIds, setIngredientIds] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -132,6 +134,15 @@ const RecipePage = () => {
     setLoadingSave(false);
   };
 
+  const onDeleteIngredient = (ingredientId) => {
+    const ids = [...ingredientIds];
+    ids.push(ingredientId);
+    setIngredientIds(ids);
+    let tempIngredients = [...ingredients];
+    tempIngredients = tempIngredients.filter((i) => i.id !== ingredientId);
+    setIngredients(tempIngredients);
+  };
+
   const onUpdateRecipe = async () => {
     setLoadingSave(true);
     const newRecipe = {
@@ -143,6 +154,7 @@ const RecipePage = () => {
       minutes_to_make: minutes,
       ingredients,
       dietary_types: [],
+      deletedIngredientIds: ingredientIds,
     };
     await RecipeService.updateRecipe(id, newRecipe);
     const recipeInfo = await RecipeService.findRecipeById(id);
@@ -210,11 +222,16 @@ const RecipePage = () => {
                 </div>
                 <div>Author: {recipe.author.displayName}</div>
                 <div>Ingredients: </div>
-                {recipe.ingredients.map((ingredient) => (
+                {ingredients.map((ingredient) => (
                   <div key={ingredient.id}>
                     <b>- </b>
                     {ingredient.measurement.amount}{" "}
                     {ingredient.measurement.unit} {ingredient.name}
+                    <DeleteIngredientButton
+                      onClick={() => onDeleteIngredient(ingredient.id)}
+                    >
+                      X
+                    </DeleteIngredientButton>
                   </div>
                 ))}
               </>

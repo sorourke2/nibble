@@ -225,9 +225,16 @@ const updateRecipe = (recipeId, newRecipe, userId, is_admin) => {
     recipe.cuisine = newRecipe.cuisine;
     recipe.minutes_to_make = newRecipe.minutes_to_make;
 
-    return recipe.save();
+    const ingredientDelete = models.ingredient.destroy({
+      where: { id: { [Op.in]: newRecipe.deletedIngredientIds } },
+    });
+
+    return Promise.all([ingredientDelete, recipe.save()]);
   });
 };
+
+const deleteIngredients = (ingredientIds) =>
+  models.ingredient.destroy({ where: { [Op.in]: ingredientIds } });
 
 const deleteRecipe = (rid, userId, is_admin) => {
   if (is_admin === 1) {
