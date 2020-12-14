@@ -12,34 +12,8 @@ const findIngredientById = (iid) =>
   });
 
 const createIngredient = (newIngredient) => {
-  const iid = newIngredient.id;
   const measurement = newIngredient.measurement;
-  // Must update ingredient
-  // if (iid) {
-  //   const mid = measurement.id;
-  //   // Must update measurement
-  //   if (mid) {
-  //     return models.measurement
-  //       .update(measurement, { where: { id: mid } })
-  //       .then((_) => {
-  //         return models.ingredient.update(newIngredient, {
-  //           where: { id: iid },
-  //         });
-  //       });
-  //   }
-  //   // Must create measurement
-  // return models.measurement
-  //   .findOrCreate({
-  //     where: { unit: measurement.unit, amount: measurement.amount },
-  //   })
-  //   .then((_) => {
-  //     return models.ingredient.update(newIngredient, {
-  //       where: { id: iid },
-  //       include: [models.measurement],
-  //     });
-  //   });
-  // }
-  // Must create ingredient, this doesn't work
+
   return models.measurement
     .findOrCreate({
       where: { unit: measurement.unit, amount: measurement.amount },
@@ -47,7 +21,10 @@ const createIngredient = (newIngredient) => {
     .then((mes) => {
       return models.ingredient.findOrCreate({
         include: [
-          { model: models.measurement, where: newIngredient.measurement },
+          {
+            model: models.measurement,
+            where: { unit: measurement.unit, amount: measurement.amount },
+          },
         ],
         where: {
           name: newIngredient.name,

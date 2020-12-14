@@ -62,7 +62,6 @@ function initModels(sequelize) {
   });
   recipe.hasMany(hasSaved, {
     foreignKey: 'recipe_id',
-    onDelete: 'CASCADE',
     hooks: true,
   });
   hasSaved.belongsTo(user, { foreignKey: 'user_id' });
