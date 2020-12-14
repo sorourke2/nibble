@@ -12,6 +12,7 @@ import RecipePage from "./pages/RecipePage";
 import CreatedPage from "./pages/CreatedPage";
 import SavedPage from "./pages/SavedPage";
 import UserPage from "./pages/UserPage";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <PrivateRoute path="/created" exact component={CreatedPage} />
         <PrivateRoute path="/saved" exact component={SavedPage} />
         <PrivateRoute path="/user/:id" exact component={UserPage} />
+        <PrivateRoute path="/admin" exact component={AdminPage} />
         <Route component={HomePage} />
       </Switch>
     </Router>

@@ -57,6 +57,11 @@ const LogoutButton = styled(BasicButton({ hoverColor: "lightblue" }))`
   float: right;
 `;
 
+const AdminButton = styled(BasicButton({ hoverColor: "orchid" }))`
+  float: right;
+  margin-right: 20px;
+`;
+
 const InputContainer = styled.div`
   border: 2px solid black;
   padding: 4px;
@@ -179,6 +184,11 @@ const ProfilePage = () => {
                 <EditButton onClick={() => setEditing(true)}>Edit</EditButton>
               )}
               <LogoutButton onClick={onLogout}>Log Out</LogoutButton>
+              {user.is_admin === 1 && (
+                <AdminButton onClick={() => history.push("/admin")}>
+                  Admin Page
+                </AdminButton>
+              )}
             </FieldContainer>
           </RightColumn>
         </Container>
