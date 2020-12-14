@@ -104,6 +104,9 @@ const ProfilePage = () => {
   const [initialsColor, setInitialsColor] = useState("");
   const [editing, setEditing] = useState(false);
   const [createdRecipes, setCreatedRecipes] = useState([]);
+  const [savedCount, setSavedCount] = useState([]);
+  const [loggedIn] = useState(localStorage.getItem("token") !== null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const getUser = async () => {
     let user = null;
@@ -119,6 +122,17 @@ const ProfilePage = () => {
     const createdRecipes = await UserService.findCreatedRecipesByUser(
       id || user.id
     );
+    console.log(loggedIn);
+    if (loggedIn) {
+      const loggedInUserSavedRecipes = await UserService.findSavedRecipes();
+      const createdRecipesIds = createdRecipes.map((r) => r.id);
+      const sharedRecipes = loggedInUserSavedRecipes.filter((lr) =>
+        createdRecipesIds.includes(lr.id)
+      );
+      const loggedInInUser = await UserService.getUser();
+      setIsAdmin(loggedInInUser.is_admin === 1);
+      setSavedCount(sharedRecipes.length);
+    }
     setCreatedRecipes(createdRecipes);
   };
 
@@ -141,8 +155,13 @@ const ProfilePage = () => {
       displayName,
       avatarColor,
       initialsColor,
+      id: id,
     };
-    await UserService.updateUser(user);
+    if (id) {
+      await UserService.updateUserById(user);
+    } else {
+      await UserService.updateUser(user);
+    }
     await getUser();
   };
 
@@ -157,7 +176,7 @@ const ProfilePage = () => {
       <div>
         {user ? (
           <Container>
-            {!id ? (
+            {!id || isAdmin ? (
               <LeftColumn>
                 <AvatarContainer>
                   <Avatar
@@ -183,6 +202,13 @@ const ProfilePage = () => {
                       />
                     </>
                   )}
+                  {loggedIn && (
+                    <UserField>
+                      <br></br>
+                      You've saved <b>{savedCount}</b> of {displayName}'s
+                      <br></br> recipes!
+                    </UserField>
+                  )}
                 </AvatarContainer>
               </LeftColumn>
             ) : (
@@ -193,9 +219,17 @@ const ProfilePage = () => {
                   fgColor={initialsColor}
                   size={"200px"}
                 />
+
+                {loggedIn && (
+                  <UserField>
+                    <br></br>
+                    You've saved <b>{savedCount}</b> of {displayName}'s<br></br>{" "}
+                    recipes!
+                  </UserField>
+                )}
               </AvatarContainer>
             )}
-            {!id ? (
+            {!id || isAdmin ? (
               <RightColumn>
                 <FieldContainer>
                   <UserField>Username:</UserField>
@@ -225,7 +259,9 @@ const ProfilePage = () => {
                       Edit
                     </EditButton>
                   )}
-                  <LogoutButton onClick={onLogout}>Log Out</LogoutButton>
+                  {(!isAdmin || !id) && (
+                    <LogoutButton onClick={onLogout}>Log Out</LogoutButton>
+                  )}
                   {user.is_admin === 1 && (
                     <AdminButton onClick={() => history.push("/admin")}>
                       Admin Page
@@ -251,7 +287,18 @@ const ProfilePage = () => {
             <LogoutButton onClick={onLogout}>Log Out</LogoutButton>
           </>
         )}
-        {!id && user && (
+        {!id && user && !isAdmin && (
+          <div>
+            <LoadingBar loading={loading} height={10} />
+            <Title>{user.displayName}'s Recipes</Title>
+            <RecipeListContainer>
+              {createdRecipes.map((recipe) => (
+                <SearchResult key={recipe.id} recipe={recipe} />
+              ))}
+            </RecipeListContainer>
+          </div>
+        )}
+        {isAdmin && user && (
           <div>
             <LoadingBar loading={loading} height={10} />
             <Title>{user.displayName}'s Recipes</Title>

@@ -32,10 +32,26 @@ const UserService = {
     });
     return response.data;
   },
-  updateUser: async ({ displayName, avatarColor, initialsColor }) => {
+  updateUser: async ({ displayName, avatarColor, initialsColor, id }) => {
     const token = getToken();
     const response = await axios.put(
       `${url}`,
+      { displayName, avatarColor, initialsColor },
+      {
+        headers: { Authorization: token },
+      }
+    );
+    return response.data;
+  },
+
+  updateUserById: async ({ displayName, avatarColor, initialsColor, id }) => {
+    const token = getToken();
+    console.log(id);
+    console.log(id);
+    console.log(id);
+    console.log(id);
+    const response = await axios.put(
+      `${url}/${id}`,
       { displayName, avatarColor, initialsColor },
       {
         headers: { Authorization: token },
