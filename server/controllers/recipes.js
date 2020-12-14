@@ -48,8 +48,11 @@ module.exports = function (app) {
     if (!decodedToken.id)
       return res.status(401).send({ message: "token invalid" });
 
+    const id = decodedToken.id;
+    const is_admin = decodedToken.is_admin;
+
     recipesService
-      .deleteRecipe(req.params["rid"])
+      .deleteRecipe(req.params["rid"], id, is_admin)
       .then((status) => res.json(status));
   });
 
@@ -74,9 +77,10 @@ module.exports = function (app) {
 
     const userId = decodedToken.id;
     const recipeId = req.params["rid"];
+    const is_admin = decodedToken.is_admin;
 
     recipesService.findRecipeById(recipeId).then((recipe) => {
-      const match = recipe.author.id === userId;
+      const match = recipe.author.id === userId || is_admin === 1;
       res.send(match);
     });
   });

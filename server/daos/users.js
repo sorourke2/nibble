@@ -1,9 +1,9 @@
-const { DataTypes, Model } = require('sequelize');
-const bcrypt = require('bcrypt');
-const sequelize = require('../database').db.sequelize;
-const { initModels } = require('../models/init-models');
+const { DataTypes, Model } = require("sequelize");
+const bcrypt = require("bcrypt");
+const sequelize = require("../database").db.sequelize;
+const { initModels } = require("../models/init-models");
 const models = initModels(sequelize);
-const changeForeignKeyName = require('../utils/foreignKey');
+const changeForeignKeyName = require("../utils/foreignKey");
 
 const userDao = {
   usernameExists: (username) => {
@@ -20,11 +20,15 @@ const userDao = {
           username,
           password: encryptedPassword,
           displayName: username,
-          avatarColor: '#000000',
-          initialsColor: '#ffffff',
+          avatarColor: "#000000",
+          initialsColor: "#ffffff",
           is_admin,
         })
-        .then((newUser) => ({ username: newUser.username, id: newUser.id }))
+        .then((newUser) => ({
+          username: newUser.username,
+          id: newUser.id,
+          is_admin: newUser.is_admin,
+        }))
     );
   },
 
@@ -36,6 +40,7 @@ const userDao = {
         match,
         username,
         id: savedUser.id,
+        is_admin: savedUser.is_admin,
       }))
     ),
 
@@ -59,15 +64,15 @@ const userDao = {
     return models.recipe
       .findAll({
         include: [
-          { model: models.user, as: 'author_fk' },
+          { model: models.user, as: "author_fk" },
           {
             model: models.dietaryType,
-            attributes: ['id', 'name'],
+            attributes: ["id", "name"],
             through: { attributes: [] },
           },
           {
             model: models.ingredient,
-            attributes: ['id', 'name'],
+            attributes: ["id", "name"],
             through: { attributes: [] },
             include: [models.measurement],
           },
@@ -77,11 +82,11 @@ const userDao = {
       .then((recipes) => {
         const safeRecipes = recipes.map((recipe) => {
           let safeRecipe = recipe.toJSON();
-          safeRecipe = changeForeignKeyName(safeRecipe, 'author_fk', 'author');
+          safeRecipe = changeForeignKeyName(safeRecipe, "author_fk", "author");
           safeRecipe = changeForeignKeyName(
             safeRecipe,
-            'dietaryTypes',
-            'dietary_types'
+            "dietaryTypes",
+            "dietary_types"
           );
           delete safeRecipe.author.password;
           delete safeRecipe.hasSaveds;
@@ -95,15 +100,15 @@ const userDao = {
     return models.recipe
       .findAll({
         include: [
-          { model: models.user, as: 'author_fk' },
+          { model: models.user, as: "author_fk" },
           {
             model: models.dietaryType,
-            attributes: ['id', 'name'],
+            attributes: ["id", "name"],
             through: { attributes: [] },
           },
           {
             model: models.ingredient,
-            attributes: ['id', 'name'],
+            attributes: ["id", "name"],
             through: { attributes: [] },
             include: [models.measurement],
           },
@@ -113,11 +118,11 @@ const userDao = {
       .then((recipes) => {
         const safeRecipes = recipes.map((recipe) => {
           let safeRecipe = recipe.toJSON();
-          safeRecipe = changeForeignKeyName(safeRecipe, 'author_fk', 'author');
+          safeRecipe = changeForeignKeyName(safeRecipe, "author_fk", "author");
           safeRecipe = changeForeignKeyName(
             safeRecipe,
-            'dietaryTypes',
-            'dietary_types'
+            "dietaryTypes",
+            "dietary_types"
           );
           delete safeRecipe.author.password;
           return safeRecipe;

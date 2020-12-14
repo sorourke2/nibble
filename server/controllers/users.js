@@ -11,8 +11,8 @@ module.exports = (app) => {
         res.status(422).send({ message: "Username already taken" });
       } else {
         UserService.registerUser({ username, password }).then(
-          ({ username, id }) => {
-            const userForToken = { username, id };
+          ({ username, id, is_admin }) => {
+            const userForToken = { username, id, is_admin };
             const token = jwt.sign(userForToken, process.env.SECRET);
             res.status(200).send({ token, username });
           }
@@ -28,9 +28,9 @@ module.exports = (app) => {
         res.status(400).send({ message: "Username does not exist" });
       } else {
         UserService.loginUser({ username, password }).then(
-          ({ match, username, id }) => {
+          ({ match, username, id, is_admin }) => {
             if (match) {
-              const userForToken = { username, id };
+              const userForToken = { username, id, is_admin };
               const token = jwt.sign(userForToken, process.env.SECRET);
               res.status(200).send({ token, username });
             } else {

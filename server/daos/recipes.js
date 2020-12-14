@@ -1,19 +1,19 @@
-const db = require('../database').db;
-const ingredientService = require('../services/ingredients');
-const { initModels } = require('../models/init-models');
-const changeForeignKeyName = require('../utils/foreignKey');
+const db = require("../database").db;
+const ingredientService = require("../services/ingredients");
+const { initModels } = require("../models/init-models");
+const changeForeignKeyName = require("../utils/foreignKey");
 const models = initModels(db.sequelize);
 
 const basicRecipeInclude = [
-  { model: models.user, as: 'author_fk' },
+  { model: models.user, as: "author_fk" },
   {
     model: models.dietaryType,
-    attributes: ['id', 'name'],
+    attributes: ["id", "name"],
     through: { attributes: [] },
   },
   {
     model: models.ingredient,
-    attributes: ['id', 'name'],
+    attributes: ["id", "name"],
     through: { attributes: [] },
     include: [models.measurement],
   },
@@ -27,11 +27,11 @@ const findAllRecipes = (filter) => {
     .then((recipes) => {
       const safeRecipes = recipes.map((recipe) => {
         let safeRecipe = recipe.toJSON();
-        safeRecipe = changeForeignKeyName(safeRecipe, 'author_fk', 'author');
+        safeRecipe = changeForeignKeyName(safeRecipe, "author_fk", "author");
         safeRecipe = changeForeignKeyName(
           safeRecipe,
-          'dietaryTypes',
-          'dietary_types'
+          "dietaryTypes",
+          "dietary_types"
         );
         delete safeRecipe.author.password;
         let include = true;
@@ -121,11 +121,11 @@ const findRecipeById = (rid) =>
         return {};
       }
       var safeRecipe = recipe.toJSON();
-      safeRecipe = changeForeignKeyName(safeRecipe, 'author_fk', 'author');
+      safeRecipe = changeForeignKeyName(safeRecipe, "author_fk", "author");
       safeRecipe = changeForeignKeyName(
         safeRecipe,
-        'dietaryTypes',
-        'dietary_types'
+        "dietaryTypes",
+        "dietary_types"
       );
       delete safeRecipe.author.password;
       return safeRecipe;
@@ -199,13 +199,16 @@ const updateRecipe = (rid, newRecipe) =>
     return createRecipe(newRecipe);
   });
 
-const deleteRecipe = (rid) => {
-  // Will the check for admin occur here or client side?
-  // May be easier client side if you have the user in the state
-  // foreign keys use ondelete cascade so this should work
-  return models.recipe.destroy({
-    where: { id: rid },
-  });
+const deleteRecipe = (rid, userId, is_admin) => {
+  if (is_admin === 1) {
+    return models.recipe.destroy({
+      where: { id: rid },
+    });
+  } else {
+    return models.recipe.destroy({
+      where: { id: rid, author: userId },
+    });
+  }
 };
 
 const truncateRecipe = () =>
